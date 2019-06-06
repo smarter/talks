@@ -1,4 +1,7 @@
 import { CodeSurferLayout } from "code-surfer";
+import "prismjs/components/prism-java";
+import "prismjs/components/prism-scala";
+
 export { githubFull as theme } from "code-surfer/themes";
 
 # Hello 👋
@@ -9,12 +12,11 @@ You are using [MDX Deck](https://github.com/jxnblk/mdx-deck) and [Code Surfer](h
 
 <CodeSurferLayout>
 
-```js title="This is a title"
-function hello(name) {
-  console.log("hello " + name);
+```scala title="This is a title"
+object Hi
+class Hi {
+  def hello: List[Int] = 1
 }
-
-hello("world");
 ```
 
 ```js 1:3 subtitle="This is a subtitle"
