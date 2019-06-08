@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import { graphviz, GraphvizOptions } from 'd3-graphviz';
-import { useEffect } from 'react';
-import { useSteps } from "mdx-deck";
+import { useEffect, useState } from 'react';
+import { useSteps, useDeck } from "@mdx-deck/components";
 
 export function Graphviz(props) {
   // let count = 0;
@@ -12,16 +12,21 @@ export function Graphviz(props) {
     width: 500,
     zoom: false,
   };
-  // constructor(props) {
-  //     super(props);
-  //     id = "graphviz" + count;
-  //     count++;
-  // }
-  const renderGraph = (i) => {
-    // console.log("step", step);
+
+  const deckState = useDeck();
+
+  const [index, setIndex] = useState(-1)
+  if (index == -1)
+    setIndex(deckState.index);
+
+  const step = useSteps(props.dot.length - 1);
+  // console.log("step: ", step, " index: ", index, " deckState.index: ", deckState.index);
+  const active = index == deckState.index;
+  
+  const renderGraph = () => {
     let g = graphviz('#' + id)
         .transition(() => {
-          if (i == 0)
+          if (step == 0)
             return null;
           return d3.transition("main")
             .ease(d3.easeLinear)
@@ -29,12 +34,7 @@ export function Graphviz(props) {
             .duration(200);
         })
         .options(options())
-        .renderDot(props.dot[i])
-        .on("end", () => {
-          console.log("endd");
-          if (i == 0)
-            renderGraph(1);
-        });
+        .renderDot(props.dot[step])
   };
 
   const options = () => {
@@ -51,8 +51,10 @@ export function Graphviz(props) {
   };
 
   useEffect(() => {
-    renderGraph(0);
-  }, []);
+    // console.log("about to run: ", props.dot, " active: ", active);
+    if (active)
+      renderGraph();
+  }, [step, props.dot]);
 
   return (
     <div id={id} />
