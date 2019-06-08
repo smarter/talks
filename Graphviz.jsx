@@ -1,3 +1,4 @@
+import * as d3 from 'd3';
 import { graphviz, GraphvizOptions } from 'd3-graphviz';
 import * as React from 'react';
 
@@ -15,17 +16,30 @@ export class Graphviz extends React.Component {
     }
 
     componentDidMount() {
-        this.renderGraph();
+        this.renderGraph(0);
     }
 
-    componentDidUpdate() {
-        this.renderGraph();
-    }
+    // componentDidUpdate() {
+    //     this.renderGraph(1);
+    // }
 
-    renderGraph() {
-        graphviz('#' + this.id)
-            .options(this.options())
-            .renderDot(this.props.dot);
+  renderGraph(i) {
+    let g = graphviz('#' + this.id)
+        .transition(() => {
+          if (i == 0)
+            return null;
+          return d3.transition("main")
+            .ease(d3.easeLinear)
+            .delay(500)
+            .duration(200);
+        })
+        .options(this.options())
+        .renderDot(this.props.dot[i])
+        .on("end", () => {
+          console.log("endd");
+          if (i == 0)
+            this.renderGraph(1);
+        });
     }
 
     options() {
@@ -41,11 +55,10 @@ export class Graphviz extends React.Component {
         return options;
     }
 }
-Dog.count = 0;
-Dog.defaultOptions = {
+Graphviz.count = 0;
+Graphviz.defaultOptions = {
   fit: true,
   height: 500,
   width: 500,
   zoom: false,
 };
-

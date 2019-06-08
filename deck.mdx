@@ -19,10 +19,39 @@ Guillaume Martres - EPFL
 # :evergreen_tree: :evergreen_tree: :evergreen_tree:
 
 ---
+# Ho
+
+<Graphviz dot={[`
+digraph {
+bgcolor=transparent;
+rankdir=LR;
+node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+magic [label="✨Magic✨"];
+src [label="Hello.scala", shape="note"];
+dst [label="Hello.class", shape="note"];
+{ rank=same src magic dst }
+src -> magic -> dst;
+}
+`,
+`
+digraph {
+bgcolor=transparent;
+rankdir=LR;
+node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+magic [label="✨Magic✨"];
+src [label="Hello.scala", shape="note"];
+dst [label="Hello.class", shape="note"];
+{ rank=same src Parser }
+{ rank=same magic dst }
+src -> Parser -> magic -> dst;
+}
+`]} options={{width: null, height: null}}/>
+
+---
 
 # Compiler pipeline
 
-<Graphviz dot={`
+<Graphviz dot={[`
 digraph {
 bgcolor=transparent;
 rankdir=LR;
@@ -37,7 +66,7 @@ dst [label="Hello.class", shape="note"];
 src -> Parser -> Typer -> Pickler -> me -> Backend -> dst;
 Pickler -> tst;
 }
-`} options={{width: null, height: null}}/>
+`]} options={{width: null, height: null}}/>
 
 ---
 
