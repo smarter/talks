@@ -3,6 +3,7 @@ import "prismjs/components/prism-java";
 import "prismjs/components/prism-scala";
 
 import { Mermaid } from "./mermaid";
+import { Graphviz } from 'graphviz-react';
 
 import { githubFull } from "code-surfer/themes";
 import myTheme from './myTheme';
@@ -21,20 +22,22 @@ Guillaume Martres - EPFL
 
 # Compiler pipeline
 
-<Mermaid chart={`
-graph LR;
-src{Hello.scala} --> Parser;
-subgraph Frontend
-  Parser --> Typer;
-end
-subgraph p
-  Typer --> Pickler;
-  Pickler --> tst{Hello.tasty};
-end
-Pickler --> Middle-End;
-Middle-End --> Backend;
-Backend --> dst{Hello.class};
-`} />
+<Graphviz dot={`
+digraph {
+bgcolor=transparent;
+rankdir=LR;
+node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+me [label="Middle-End"];
+src [label="Hello.scala", shape="note"];
+tst [label="Hello.tasty", shape="note"];
+dst [label="Hello.class", shape="note"];
+{ rank=same src Parser }
+{ rank=same Pickler tst }
+{ rank=same Backend dst }
+src -> Parser -> Typer -> Pickler -> me -> Backend -> dst;
+Pickler -> tst;
+}
+`} options={{width: null, height: null}}/>
 
 ---
 

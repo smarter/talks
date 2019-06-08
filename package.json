@@ -8,8 +8,11 @@
   },
   "devDependencies": {
     "code-surfer": "2.0.0-alpha.4",
+    "d3-graphviz": "^2.6.1",
+    "graphviz-react": "^1.0.2",
     "mdx-deck": "2.3.2",
     "mermaid": "^8.0.0"
   },
-  "name": "my-deck"
+  "name": "my-deck",
+  "dependencies": {}
 }
