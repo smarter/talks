@@ -1,30 +1,25 @@
 import * as d3 from 'd3';
 import { graphviz, GraphvizOptions } from 'd3-graphviz';
-import * as React from 'react';
+import { useEffect } from 'react';
+import { useSteps } from "mdx-deck";
 
-export class Graphviz extends React.Component {
-    constructor(props) {
-        super(props);
-        this.id = "graphviz" + Graphviz.count;
-        Graphviz.count++;
-    }
-
-    render() {
-        return (
-            <div id={this.id} />
-        );
-    }
-
-    componentDidMount() {
-        this.renderGraph(0);
-    }
-
-    // componentDidUpdate() {
-    //     this.renderGraph(1);
-    // }
-
-  renderGraph(i) {
-    let g = graphviz('#' + this.id)
+export function Graphviz(props) {
+  // let count = 0;
+  const id = "graphviz";
+  const defaultOptions = {
+    fit: true,
+    height: 500,
+    width: 500,
+    zoom: false,
+  };
+  // constructor(props) {
+  //     super(props);
+  //     id = "graphviz" + count;
+  //     count++;
+  // }
+  const renderGraph = (i) => {
+    // console.log("step", step);
+    let g = graphviz('#' + id)
         .transition(() => {
           if (i == 0)
             return null;
@@ -33,32 +28,33 @@ export class Graphviz extends React.Component {
             .delay(500)
             .duration(200);
         })
-        .options(this.options())
-        .renderDot(this.props.dot[i])
+        .options(options())
+        .renderDot(props.dot[i])
         .on("end", () => {
           console.log("endd");
           if (i == 0)
-            this.renderGraph(1);
+            renderGraph(1);
         });
+  };
+
+  const options = () => {
+    if (!props.options) {
+      return defaultOptions
     }
 
-    options() {
-        if (!this.props.options) {
-            return Graphviz.defaultOptions
-        }
-
-        const options = Graphviz.defaultOptions;
-        for(const option of Object.keys(this.props.options)) {
-            options[option] = this.props.options[option];
-        }
-
-        return options;
+    const options = defaultOptions;
+    for(const option of Object.keys(props.options)) {
+      options[option] = props.options[option];
     }
+
+    return options;
+  };
+
+  useEffect(() => {
+    renderGraph(0);
+  }, []);
+
+  return (
+    <div id={id} />
+  );
 }
-Graphviz.count = 0;
-Graphviz.defaultOptions = {
-  fit: true,
-  height: 500,
-  width: 500,
-  zoom: false,
-};
