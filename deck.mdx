@@ -20,7 +20,15 @@ Guillaume Martres - EPFL
 
 ---
 
-# Ho
+# Tasty binary format
+
+- xx copy from prev presentation
+- preserve all information that cannot be recreated
+- make sure useful info has not been lost in a previous phase (final val)
+
+---
+
+# Compiler pipeline
 
 <Graphviz dot={[`
 digraph {
@@ -46,7 +54,7 @@ dst [label="Hello.class", shape="note"];
 { rank=same magic dst }
 src -> Parser -> magic -> dst;
 }
-`]} options={{width: null, height: null}}/>
+`]} />
 
 ---
 
@@ -67,7 +75,7 @@ dst [label="Hello.class", shape="note"];
 src -> Parser -> Typer -> Pickler -> me -> Backend -> dst;
 Pickler -> tst;
 }
-`]} options={{width: null, height: null}}/>
+`]} />
 
 ---
 

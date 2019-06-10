@@ -8,8 +8,6 @@ export function Graphviz(props) {
   const id = "graphviz";
   const defaultOptions = {
     fit: true,
-    height: 500,
-    width: 500,
     zoom: false,
   };
 
