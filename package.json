@@ -14,5 +14,7 @@
     "mermaid": "^8.0.0"
   },
   "name": "my-deck",
-  "dependencies": {}
+  "dependencies": {
+    "railroad-diagrams": "https://github.com/tabatkins/railroad-diagrams#c889ecc"
+  }
 }

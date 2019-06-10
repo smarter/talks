@@ -1,14 +1,24 @@
+import { Head } from 'mdx-deck';
 import { CodeSurferLayout } from "code-surfer";
 import "prismjs/components/prism-java";
 import "prismjs/components/prism-scala";
 
 import { Mermaid } from "./mermaid";
 import { Graphviz } from "./Graphviz";
+import { Railroad } from "./Railroad";
+import rr from "railroad-diagrams";
 
 import { githubFull } from "code-surfer/themes";
 import myTheme from './myTheme';
 
 export const themes = [githubFull, myTheme]
+
+<Head>
+  <link rel="stylesheet"
+  href={require("railroad-diagrams/railroad-diagrams.css")} />
+  <link rel="stylesheet"
+  href={require("./railroad-custom.css")} />
+</Head>
 
 # :evergreen_tree: :evergreen_tree: :evergreen_tree:
 
@@ -17,6 +27,25 @@ export const themes = [githubFull, myTheme]
 Guillaume Martres - EPFL
 
 # :evergreen_tree: :evergreen_tree: :evergreen_tree:
+
+---
+
+# Tasty binary format
+
+<Railroad diagram={
+rr.Diagram(rr.Stack(
+  rr.Sequence("0x5CA1AB1F", "Major Version", "Minor Version"),
+  rr.Sequence("NameTable", rr.OneOrMore("Section"))
+))
+} />
+
+---
+
+# NameTable
+
+<Railroad diagram={
+rr.Diagram("Length", rr.OneOrMore("Name"))
+} />
 
 ---
 
