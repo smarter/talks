@@ -199,6 +199,18 @@ I don't know, but it seems worth trying.
 
 ---
 
+# The plan
+
+<ul>
+  <Appear>
+  <li>Let's make our own format!</li>
+  <li>It will store the output of one of the compiler phase</li>
+  <li>But where should we put it in the compiler pipeline exactly ?</li>
+  </Appear>
+</ul>
+
+---
+
 # Scala compiler pipeline
 
 <Graphviz dot={[
@@ -206,7 +218,7 @@ I don't know, but it seems worth trying.
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
 magic [label="✨ Magic ✨", style="filled", fillcolor="#d6c8ff"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
@@ -218,7 +230,7 @@ src -> magic -> dst;
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
 magic [label="✨ Magic ✨", style="filled", fillcolor="#d6c8ff"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
@@ -240,7 +252,7 @@ digraph {
 margin=1.0;
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled", fillcolor="#cde498"];
+node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled", fillcolor="#cde498"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident -> obj
 labelloc="t";
@@ -254,7 +266,7 @@ digraph {
 margin=0.5;
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled"];
+node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident -> obj
 node [fillcolor="#cde498"];
@@ -271,7 +283,7 @@ label=<             <b>obj.elem</b>                    >;
 digraph {
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled"];
+node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident -> obj
 elem [label="\\\"elem\\\"", style="filled"]
@@ -296,7 +308,7 @@ label=<             <b>obj.elem(5)</b>                    >;
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
 magic [label="✨ Magic ✨", style="filled", fillcolor="#d6c8ff"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
@@ -309,7 +321,7 @@ src -> Parser -> magic -> dst;
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
 magic [label="✨ Magic ✨", style="filled", fillcolor="#d6c8ff"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
@@ -330,7 +342,7 @@ src -> Parser -> Typer -> magic -> dst;
 digraph {
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled"];
+node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident -> obj
 elem [label="\\\"elem\\\"", style="filled"]
@@ -346,7 +358,7 @@ Literal -> 5
 digraph {
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled"];
+node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident -> obj
 elem [label="\\\"elem\\\"", style="filled"]
@@ -362,7 +374,7 @@ Literal -> 5
 digraph {
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled"];
+node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident -> obj
 elem [label="\\\"elem\\\"", style="filled"]
@@ -378,7 +390,7 @@ Literal -> 5
 digraph {
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled"];
+node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident [shape="record", label="Ident | A.obj", fillcolor="#fae3d9"]
 Ident -> obj
@@ -395,7 +407,7 @@ Literal -> 5
 digraph {
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled"];
+node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident [shape="record", label="Ident | A.obj", fillcolor="#fae3d9"]
 Select [shape="record", label="Select | A.obj.elem: Int =\\\> Int", fillcolor="#fae3d9"]
@@ -413,7 +425,7 @@ Literal -> 5
 digraph {
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled"];
+node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident [shape="record", label="Ident | A.obj", fillcolor="#fae3d9"]
 Select [shape="record", label="Select | A.obj.elem: Int =\\\> Int", fillcolor="#fae3d9"]
@@ -432,7 +444,7 @@ Literal -> 5
 digraph {
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled"];
+node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident [shape="record", label="Ident | A.obj", fillcolor="#fae3d9"]
 Select [shape="record", label="Select | A.obj.elem: Int =\\\> Int", fillcolor="#fae3d9"]
@@ -469,7 +481,7 @@ Literal -> 5
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
 magic [label="✨ Magic ✨", style="filled", fillcolor="#d6c8ff"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
@@ -482,7 +494,7 @@ src -> Parser -> Typer -> magic -> dst;
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
 { rank=same src Parser }
@@ -494,7 +506,7 @@ src -> Parser -> Typer -> Pickler -> "Middle-End" -> Backend -> dst;
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
 Pickler [ style="bold", color="red"];
@@ -507,7 +519,7 @@ src -> Parser -> Typer -> Pickler -> "Middle-End" -> Backend -> dst;
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
 "Middle-End" [ style="bold", color="red"];
@@ -520,7 +532,7 @@ src -> Parser -> Typer -> Pickler -> "Middle-End" -> Backend -> dst;
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
 Backend [ style="bold", color="red"];
@@ -533,7 +545,7 @@ src -> Parser -> Typer -> Pickler -> "Middle-End" -> Backend -> dst;
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
 tst [label="Hello.tasty", shape="note", style="bold, filled", fillcolor="#f8f3d4", color="red"];
