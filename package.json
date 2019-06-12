@@ -7,7 +7,7 @@
     "test": "echo \"there are no tests\""
   },
   "devDependencies": {
-    "code-surfer": "2.0.0-alpha.4",
+    "code-surfer": "https://github.com/pomber/code-surfer#db88c1cc2caf1b917f5ae8179ed8de3cb1bdd823",
     "d3-graphviz": "^2.6.1",
     "graphviz-react": "^1.0.2",
     "mdx-deck": "2.3.2",
