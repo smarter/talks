@@ -28,8 +28,7 @@ export function Graphviz(props) {
             return null;
           return d3.transition("main")
             .ease(d3.easeLinear)
-            .delay(500)
-            .duration(200);
+            .duration(400);
         })
         .options(options())
         .renderDot(props.dot[step])
