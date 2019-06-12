@@ -1,3 +1,6 @@
 svg.railroad-diagram {
     background-color: inherit !important;
 }
+.red > rect {
+    fill: hsl(0,100%,85%) !important;
+}

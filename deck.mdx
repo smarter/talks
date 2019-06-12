@@ -1,11 +1,11 @@
-import { Head } from 'mdx-deck';
+import { Appear, Head } from 'mdx-deck';
 import { CodeSurferLayout } from "code-surfer";
 import "prismjs/components/prism-java";
 import "prismjs/components/prism-scala";
 
 import { Mermaid } from "./mermaid";
 import { Graphviz } from "./Graphviz";
-import { Railroad } from "./Railroad";
+import { Railroad, Red } from "./Railroad";
 import rr from "railroad-diagrams";
 
 import { githubFull } from "code-surfer/themes";
@@ -30,43 +30,186 @@ Guillaume Martres - EPFL
 
 ---
 
-# Tasty binary format
+# Upgrading Scala
 
-<Railroad diagram={
-rr.Diagram(rr.Stack(
-  rr.Sequence("0x5CA1AB1F", "Major Version", "Minor Version"),
-  rr.Sequence("NameTable", rr.OneOrMore("Section"))
-))
-} />
+<Graphviz dot={[
+`
+digraph {
+bgcolor=transparent;
+rankdir=BT;
+node [fontsize="38.0", fontname="Source Sans Pro", shape="box", style="filled", fillcolor="#dbe2ef"];
+app [label="MyAwesomeApp"]
+app
+}
+`,
+`
+digraph {
+bgcolor=transparent;
+rankdir=BT;
+node [fontsize="38.0", fontname="Source Sans Pro", shape="box", style="filled", fillcolor="#dbe2ef"];
+app [label="MyAwesomeApp_2.12"]
+stdlib [label="scala-library_2.12"]
+app -> stdlib
+}
+`,
+`
+digraph {
+bgcolor=transparent;
+rankdir=BT;
+node [fontsize="38.0", fontname="Source Sans Pro", shape="box", style="filled", fillcolor="#dbe2ef"];
+app [label="MyAwesomeApp_2.13", fillcolor="#eaffd0"]
+stdlib [label="scala-library_2.13", fillcolor="#eaffd0"];
+app -> stdlib;
+}
+`
+,
+`
+digraph {
+bgcolor=transparent;
+rankdir=BT;
+node [fontsize="38.0", fontname="Source Sans Pro", shape="box", style="filled", fillcolor="#dbe2ef"];
+app [label="MyAwesomeApp_2.13", fillcolor="#eaffd0"]
+a [label="A_2.12"]
+b [label="B_2.12"]
+stdlib [label="scala-library_2.13", fillcolor="#eaffd0"];
+app -> a [color="red", label="❌"];
+a -> stdlib [color="red", label="❌"];
+app -> b [color="red", label="❌"];
+b -> stdlib [color="red", label="❌"];
+}
+`
+,
+`
+digraph {
+bgcolor=transparent;
+rankdir=BT;
+node [fontsize="38.0", fontname="Source Sans Pro", shape="box", style="filled", fillcolor="#dbe2ef"];
+app [label="MyAwesomeApp_2.13", fillcolor="#eaffd0"]
+a [label="A_2.12"]
+b [label="B_2.12"]
+x [label="X_2.12"]
+y [label="Y_2.12"]
+z [label="Z_2.12"]
+stdlib [label="scala-library_2.13", fillcolor="#eaffd0"];
+app -> a [color="red", label="❌"];
+app -> b [color="red", label="❌"];
+a -> x;
+x -> stdlib [color="red", label="❌"];
+a -> y;
+y -> stdlib [color="red", label="❌"];
+b -> y;
+b -> z;
+z -> stdlib [color="red", label="❌"];
+}
+`
+,
+`
+digraph {
+bgcolor=transparent;
+rankdir=BT;
+node [fontsize="38.0", fontname="Source Sans Pro", shape="box", style="filled", fillcolor="#dbe2ef"];
+app [label="MyAwesomeApp_2.13", fillcolor="#eaffd0"]
+a [label="A_2.12"]
+b [label="B_2.12"]
+x [label="X_2.13", fillcolor="#eaffd0"]
+y [label="Y_2.13", fillcolor="#eaffd0"]
+z [label="Z_2.13", fillcolor="#eaffd0"]
+stdlib [label="scala-library_2.13", fillcolor="#eaffd0"];
+app -> a [color="red", label="❌"];
+app -> b [color="red", label="❌"];
+a -> x [color="red", label="❌"];
+x -> stdlib;
+a -> y [color="red", label="❌"];
+y -> stdlib;
+b -> y [color="red", label="❌"];
+b -> z [color="red", label="❌"];
+z -> stdlib;
+}
+`
+,
+`
+digraph {
+bgcolor=transparent;
+rankdir=BT;
+node [fontsize="38.0", fontname="Source Sans Pro", shape="box", style="filled", fillcolor="#dbe2ef"];
+app [label="MyAwesomeApp_2.13", fillcolor="#eaffd0"]
+a [label="A_2.13", fillcolor="#eaffd0"]
+b [label="B_2.13", fillcolor="#eaffd0"]
+x [label="X_2.13", fillcolor="#eaffd0"]
+y [label="Y_2.13", fillcolor="#eaffd0"]
+z [label="Z_2.13", fillcolor="#eaffd0"]
+stdlib [label="scala-library_2.13", fillcolor="#eaffd0"];
+app -> a;
+app -> b;
+a -> x -> stdlib;
+a -> y -> stdlib;
+b -> y;
+b -> z -> stdlib;
+}
+`
+,
+]} />
 
 ---
 
-# NameTable
+# What is binary compatibility ?
 
-<Railroad diagram={
-rr.Diagram("Length", rr.OneOrMore("Name"))
-} />
-
----
-
-# Tasty binary format
-
-- xx copy from prev presentation
-- preserve all information that cannot be recreated
-- make sure useful info has not been lost in a previous phase (final val)
+<ul>
+  <Appear>
+<li>Project <b>A</b> is compiled against version <b>X</b> of project <b>B</b></li>
+    <li>Project <b>A</b> is run with agaisnt version <b>Y</b> of project <b>B</b></li>
+    <li>If this doesn't work, versions <b>X</b> and <b>Y</b> are <em>binary-incompatible</em></li>
+    <li>More details: <a href="https://www.youtube.com/watch?v=2wkEX6MCxJs">Designing libraries for source and binary compatibility</a> by Sébastien Doeraene</li>
+  </Appear>
+</ul>
 
 ---
 
-# Compiler pipeline
+# Why does Scala break binary compatibility ?
 
-<Graphviz dot={[`
+<ul>
+  <Appear>
+    <li>Some changes are hard/impossible to make otherwise</li>
+    <li>2.11 ➡️ 2.12: new encoding for traits, based on Java 8 default methods</li>
+    <li>2.12 ➡️ 2.13: redesigned collection hierarchy</li>
+    <li>"There's always a good reason"</li>
+  </Appear>
+</ul>
+
+---
+
+# Can we keep binary compatibility while still evolving Scala ?
+
+I don't know, but it seems worth trying.
+
+---
+
+# Case study: Scala.js
+
+<ul>
+  <Appear>
+  <li>Basically its own compiler, masquerading as a compiler plugin</li>
+  <li>Has maintained binary compatibility for <em>more than 4 years</em></li>
+  <li>Scala.js-compiled jars do not contain <b>.js</b> files</li>
+  <li>Instead, uses its own custom intermediate representation: <b>.sjsir</b></li>
+  <li>When compiling your own project, the Scala.js linker will use the .sjsir
+  files of all your dependencies as input to produce JavaScript.</li>
+  </Appear>
+</ul>
+
+---
+
+# Scala compiler pipeline
+
+<Graphviz dot={[
+`
 digraph {
 bgcolor=transparent;
 rankdir=LR;
 node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
-magic [label="✨Magic✨"];
-src [label="Hello.scala", shape="note"];
-dst [label="Hello.class", shape="note"];
+magic [label="✨ Magic ✨", style="filled", fillcolor="#aa96da"];
+src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
+dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
 { rank=same src magic dst }
 src -> magic -> dst;
 }
@@ -76,50 +219,20 @@ digraph {
 bgcolor=transparent;
 rankdir=LR;
 node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
-magic [label="✨Magic✨"];
-src [label="Hello.scala", shape="note"];
-dst [label="Hello.class", shape="note"];
+magic [label="✨ Magic ✨", style="filled", fillcolor="#aa96da"];
+src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
+dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
+Parser [ style="filled", fillcolor="#f9f7f7"];
 { rank=same src Parser }
 { rank=same magic dst }
 src -> Parser -> magic -> dst;
 }
-`]} />
+`,
+]} />
 
 ---
 
-# Compiler pipeline
-
-<Graphviz dot={[`
-digraph {
-bgcolor=transparent;
-rankdir=LR;
-node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
-me [label="Middle-End"];
-src [label="Hello.scala", shape="note"];
-tst [label="Hello.tasty", shape="note"];
-dst [label="Hello.class", shape="note"];
-{ rank=same src Parser }
-{ rank=same Pickler tst }
-{ rank=same Backend dst }
-src -> Parser -> Typer -> Pickler -> me -> Backend -> dst;
-Pickler -> tst;
-}
-`]} />
-
----
-
-# Untyped Tree
-
-<Mermaid params={{ theme: "forest" }} chart={`
-graph TB;
-app(Apply) --> sel(Select);
-app --> lit("Literal");
-lit --> 5("5");
-sel --> id("Ident(''obj'')");
-sel --> fun("''meth''");
-`} />
-
----
+# Parsing
 
 <CodeSurferLayout>
 
@@ -192,3 +305,187 @@ Apply(
 )
 ```
 </CodeSurferLayout>
+
+---
+
+# Making untyped trees
+
+<Mermaid params={{ theme: "forest" }} chart={`
+graph TB;
+app(Apply) --> sel(Select);
+app --> lit("Literal");
+lit --> 5("5");
+sel --> id("Ident(''obj'')");
+sel --> fun("''meth''");
+`} />
+
+---
+
+# Tasty binary format
+
+<Railroad diagram={
+rr.Diagram(rr.Stack(
+  rr.Sequence(Red("0x5CA1AB1F"), "major version: Nat", "minor version: Nat"),
+  rr.Sequence("NameTable", rr.OneOrMore("Section"))
+))
+} />
+
+---
+
+# NameTable
+
+<Railroad diagram={
+rr.Diagram("length: Nat", rr.OneOrMore("Name"))
+} />
+
+---
+
+# Name
+
+<Railroad diagram={
+rr.Diagram(
+  rr.Choice(1,
+  rr.Sequence("UTF8Name"),
+  rr.Sequence("QualifiedName"),
+  rr.Sequence("DefaultGetterName"),
+  rr.Comment("...")
+  )
+)
+} />
+
+---
+
+# UTF8Name
+
+<Railroad diagram={
+rr.Diagram(
+  Red("UTF8"), "length: Nat", rr.OneOrMore("UTF8-Codepoint")
+)
+} />
+
+---
+
+# QualifiedName
+(for example: `scala.Int`)
+
+<Railroad diagram={
+rr.Diagram(
+  Red("QUALIFIED"), "length: Nat", "qualifier: NameRef", "selector: NameRef"
+)
+} />
+
+---
+
+# ASTs section
+
+<Railroad diagram={
+rr.Diagram(
+  "\"ASTs\"", rr.OneOrMore("Statement")
+)
+} />
+
+---
+
+# Statement
+
+<Railroad diagram={
+rr.Diagram(rr.Choice(1,
+    rr.Sequence(Red("PACKAGE"), "Path", rr.OneOrMore("Statement")),
+    rr.Sequence(Red("IMPORT"), "qualifier: Term", rr.OneOrMore("Selector")),
+    rr.Sequence(Red("VALDEF"), "NameRef", "Type", rr.Optional("rhs: Term"), rr.OneOrMore("Modifier")),
+    rr.Comment("..."),
+))
+} />
+
+---
+
+# Term
+
+<Railroad diagram={
+rr.Diagram(rr.Choice(2,
+    rr.Sequence(Red("IDENT"), "NameRef", "Type"),
+    rr.Sequence(Red("SELECT"), "NameRef", "Term"),
+    rr.Sequence(Red("APPLY"), "fun: Term", rr.ZeroOrMore("arg: Term")),
+    rr.Sequence(Red("IF"), "cond: Term", "then: Term", "else: Term"),
+    rr.Comment("...")
+))
+} />
+
+---
+
+# Type
+
+<Railroad diagram={
+rr.Diagram(rr.Choice(2,
+    rr.Sequence(Red("TYPEREF"), "NameRef", "qual: Type"),
+    rr.Sequence(Red("TERMREF"), "NameRef", "qual: Type"),
+    rr.Sequence(Red("TYPEBOUNDS"), "low: Type", "high: Type"),
+    rr.Sequence(Red("APPLIEDtype"), "type constructor: Type", rr.ZeroOrMore("argument: Type")),
+    rr.Comment("...")
+))
+} />
+
+---
+
+# Comments section
+
+Stores scaladoc of each definition
+
+<Railroad diagram={
+rr.Diagram(
+  "\"Comments\"", rr.OneOrMore("Comment")
+)
+} />
+
+---
+
+# Comment
+
+<Railroad diagram={
+rr.Diagram(
+  "definition: Addr", "length: Nat", rr.OneOrMore("UTF8-CodePoint"), "position: Coord"
+)
+} />
+
+---
+
+# Positions section
+
+- Stores the position of every user-written tree
+- Encodes delta between positions
+
+<Railroad diagram={
+rr.Diagram(
+  "\"Positions\"", rr.OneOrMore("Assoc")
+)
+} />
+
+---
+
+# Tasty binary format
+
+- xx copy from prev presentation
+- preserve all information that cannot be recreated
+- make sure useful info has not been lost in a previous phase (final val)
+
+---
+
+# Compiler pipeline
+
+<Graphviz dot={[`
+digraph {
+bgcolor=transparent;
+rankdir=LR;
+node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+me [label="Middle-End"];
+src [label="Hello.scala", shape="note"];
+tst [label="Hello.tasty", shape="note"];
+dst [label="Hello.class", shape="note"];
+{ rank=same src Parser }
+{ rank=same Pickler tst }
+{ rank=same Backend dst }
+src -> Parser -> Typer -> Pickler -> me -> Backend -> dst;
+Pickler -> tst;
+}
+`]} />
+

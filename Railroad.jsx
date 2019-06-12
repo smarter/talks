@@ -1,16 +1,24 @@
-import { useEffect, useState } from 'react';
+import { createRef, useEffect, useState } from 'react';
 import rr from "railroad-diagrams";
 
+export function Red(elem) {
+  let node = rr.Terminal(elem);
+  node.attrs['class'] += " red"
+  return node;
+}
+
 export function Railroad(props) {
+  let mainDiv = createRef();
+  
   useEffect(() => {
-    let d = document.getElementById("railroad");
+    let d = mainDiv.current;
     props.diagram.addTo(d);
     let svgStyle = d.getElementsByTagName("svg")[0].style;
-    svgStyle.width = "100%";
-    svgStyle.height = "100%";
+    svgStyle.width = props.width || "100%";
+    svgStyle.height = props.height || "100%";
   }, []);
 
   return (
-    <div id="railroad" />
+    <div ref={mainDiv}  />
   );
 }
