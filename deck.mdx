@@ -22,7 +22,7 @@ export const themes = [githubFull, myTheme]
 
 # :evergreen_tree: :evergreen_tree: :evergreen_tree:
 
-# Future-proofing Scala through TASTY
+# Future-proofing Scala through Tasty
 
 Guillaume Martres - EPFL
 
@@ -178,7 +178,7 @@ b -> z -> stdlib;
 
 ---
 
-# Can we keep binary compatibility while still evolving Scala ?
+# Can we maintain compatibility while still evolving Scala ?
 
 I don't know, but it seems worth trying.
 
@@ -222,7 +222,7 @@ node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
 magic [label="✨ Magic ✨", style="filled", fillcolor="#d6c8ff"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
-Parser [ style="filled", fillcolor="#f9f7f7"];
+Parser [ style="bold", color="red"];
 { rank=same src Parser }
 { rank=same magic dst }
 src -> Parser -> magic -> dst;
@@ -241,7 +241,8 @@ margin=1.0;
 bgcolor=transparent;
 rankdir=TB;
 node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled", fillcolor="#cde498"];
-Ident -> "\\\"obj\\\""
+obj [label="\\\"obj\\\"", style="filled"]
+Ident -> obj
 labelloc="t";
 fontname="Fira Mono";
 fontsize="50.0";
@@ -254,10 +255,12 @@ margin=0.5;
 bgcolor=transparent;
 rankdir=TB;
 node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled"];
-Ident -> "\\\"obj\\\""
+obj [label="\\\"obj\\\"", style="filled"]
+Ident -> obj
 node [fillcolor="#cde498"];
+elem [label="\\\"elem\\\"", style="filled"]
 Select -> Ident
-Select -> "\\\"elem\\\""
+Select -> elem
 labelloc="t";
 fontname="Fira Mono";
 fontsize="50.0";
@@ -269,11 +272,14 @@ digraph {
 bgcolor=transparent;
 rankdir=TB;
 node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled"];
-Ident -> "\\\"obj\\\""
+obj [label="\\\"obj\\\"", style="filled"]
+Ident -> obj
+elem [label="\\\"elem\\\"", style="filled"]
 Select -> Ident
-Select -> "\\\"elem\\\""
+Select -> elem
 node [fillcolor="#cde498"];
-Apply -> Select
+5 [style="filled"]
+  Apply -> Select
 Apply -> Literal -> 5
 labelloc="t";
 fontname="Fira Mono";
@@ -282,6 +288,276 @@ label=<             <b>obj.elem(5)</b>                    >;
 }
 `,
 ]} />
+
+---
+
+<Graphviz dot={[
+`
+digraph {
+bgcolor=transparent;
+rankdir=LR;
+node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+magic [label="✨ Magic ✨", style="filled", fillcolor="#d6c8ff"];
+src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
+dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
+{ rank=same src Parser }
+{ rank=same magic dst }
+src -> Parser -> magic -> dst;
+}
+`,
+`
+digraph {
+bgcolor=transparent;
+rankdir=LR;
+node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+magic [label="✨ Magic ✨", style="filled", fillcolor="#d6c8ff"];
+src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
+dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
+Typer [ style="bold", color="red"];
+{ rank=same src Parser }
+{ rank=same magic dst }
+src -> Parser -> Typer -> magic -> dst;
+}
+`,
+]} />
+
+---
+
+# Typing
+
+<Graphviz dot={[
+`
+digraph {
+bgcolor=transparent;
+rankdir=TB;
+node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled"];
+obj [label="\\\"obj\\\"", style="filled"]
+Ident -> obj
+elem [label="\\\"elem\\\"", style="filled"]
+Select -> Ident
+Select -> elem
+5 [style="filled"]
+Apply -> Select
+Apply -> Literal
+Literal -> 5
+}
+`,
+`
+digraph {
+bgcolor=transparent;
+rankdir=TB;
+node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled"];
+obj [label="\\\"obj\\\"", style="filled"]
+Ident -> obj
+elem [label="\\\"elem\\\"", style="filled"]
+Select -> Ident
+Select -> elem
+5 [style="filled"]
+Apply -> Select [color="red"];
+Apply -> Literal
+Literal -> 5
+}
+`,
+`
+digraph {
+bgcolor=transparent;
+rankdir=TB;
+node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled"];
+obj [label="\\\"obj\\\"", style="filled"]
+Ident -> obj
+elem [label="\\\"elem\\\"", style="filled"]
+Select -> Ident [color="red"];
+Select -> elem
+5 [style="filled"]
+Apply -> Select [color="red"];
+Apply -> Literal
+Literal -> 5
+}
+`,
+`
+digraph {
+bgcolor=transparent;
+rankdir=TB;
+node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled"];
+obj [label="\\\"obj\\\"", style="filled"]
+Ident [shape="record", label="Ident | A.obj", fillcolor="#fae3d9"]
+Ident -> obj
+elem [label="\\\"elem\\\"", style="filled"]
+Select -> Ident [color="red"];
+Select -> elem
+5 [style="filled"]
+Apply -> Select [color="red"];
+Apply -> Literal
+Literal -> 5
+}
+`,
+`
+digraph {
+bgcolor=transparent;
+rankdir=TB;
+node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled"];
+obj [label="\\\"obj\\\"", style="filled"]
+Ident [shape="record", label="Ident | A.obj", fillcolor="#fae3d9"]
+Select [shape="record", label="Select | A.obj.elem: Int =\\\> Int", fillcolor="#fae3d9"]
+Ident -> obj
+elem [label="\\\"elem\\\"", style="filled"]
+Select -> Ident;
+Select -> elem
+5 [style="filled"]
+Apply -> Select [color="red"];
+Apply -> Literal
+Literal -> 5
+}
+`,
+`
+digraph {
+bgcolor=transparent;
+rankdir=TB;
+node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled"];
+obj [label="\\\"obj\\\"", style="filled"]
+Ident [shape="record", label="Ident | A.obj", fillcolor="#fae3d9"]
+Select [shape="record", label="Select | A.obj.elem: Int =\\\> Int", fillcolor="#fae3d9"]
+Literal [shape="record", label="Literal | 5", fillcolor="#fae3d9"]
+Ident -> obj
+elem [label="\\\"elem\\\"", style="filled"]
+Select -> Ident;
+Select -> elem
+5 [style="filled"]
+Apply -> Select
+Apply -> Literal [color="red"];
+Literal -> 5
+}
+`,
+`
+digraph {
+bgcolor=transparent;
+rankdir=TB;
+node [shape="box", fontname="Source Sans Pro", fontsize="28.0", style="rounded, filled"];
+obj [label="\\\"obj\\\"", style="filled"]
+Ident [shape="record", label="Ident | A.obj", fillcolor="#fae3d9"]
+Select [shape="record", label="Select | A.obj.elem: Int =\\\> Int", fillcolor="#fae3d9"]
+Literal [shape="record", label="Literal | 5", fillcolor="#fae3d9"]
+Apply [shape="record", label="Apply | Int", fillcolor="#fae3d9"]
+Ident -> obj
+elem [label="\\\"elem\\\"", style="filled"]
+Select -> Ident;
+Select -> elem
+5 [style="filled"]
+Apply -> Select
+Apply -> Literal
+Literal -> 5
+}
+`,
+]} />
+
+---
+
+# Typing can create new trees
+
+<ul>
+  <Appear>
+    <li>List(1, 2) ➡️ List.apply(1, 2)</li>
+    <li>xs.max ➡️ xs.max(Ordering.Int)</li>
+    <li>Idempotency: retyping a typed tree will not create new tree</li>
+  </Appear>
+</ul>
+
+---
+
+<Graphviz dot={[
+`
+digraph {
+bgcolor=transparent;
+rankdir=LR;
+node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+magic [label="✨ Magic ✨", style="filled", fillcolor="#d6c8ff"];
+src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
+dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
+{ rank=same src Parser }
+{ rank=same magic dst }
+src -> Parser -> Typer -> magic -> dst;
+}
+`,
+`
+digraph {
+bgcolor=transparent;
+rankdir=LR;
+node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
+dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
+{ rank=same src Parser }
+{ rank=same Backend dst }
+src -> Parser -> Typer -> Pickler -> "Middle-End" -> Backend -> dst;
+}
+`,
+`
+digraph {
+bgcolor=transparent;
+rankdir=LR;
+node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
+dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
+Pickler [ style="bold", color="red"];
+{ rank=same src Parser }
+{ rank=same Backend dst }
+src -> Parser -> Typer -> Pickler -> "Middle-End" -> Backend -> dst;
+}
+`,
+`
+digraph {
+bgcolor=transparent;
+rankdir=LR;
+node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
+dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
+"Middle-End" [ style="bold", color="red"];
+{ rank=same src Parser }
+{ rank=same Backend dst }
+src -> Parser -> Typer -> Pickler -> "Middle-End" -> Backend -> dst;
+}
+`,
+`
+digraph {
+bgcolor=transparent;
+rankdir=LR;
+node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
+dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
+Backend [ style="bold", color="red"];
+{ rank=same src Parser }
+{ rank=same Backend dst }
+src -> Parser -> Typer -> Pickler -> "Middle-End" -> Backend -> dst;
+}
+`,
+`
+digraph {
+bgcolor=transparent;
+rankdir=LR;
+node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
+src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
+dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
+tst [label="Hello.tasty", shape="note", style="bold, filled", fillcolor="#f8f3d4", color="red"];
+{ rank=same src Parser }
+{ rank=same Pickler tst }
+{ rank=same Backend dst }
+src -> Parser -> Typer -> Pickler -> "Middle-End" -> Backend -> dst;
+Pickler -> tst [ style="bold", color="red"];
+}
+`,
+]} />
+
+---
+
+# Tasty design goals
+
+<ul>
+  <Appear>
+    <li>Evolvable</li>
+    <li>As compact as possible (.jar size increase: &lt; 50%)</li>
+    <li>Preserve all the information needed for compilation</li>
+    <li>Contains extra information useful for tooling (IDE, REPL, scaladoc, ...)</li>
+  </Appear>
+</ul>
 
 ---
 
@@ -363,20 +639,6 @@ rr.Diagram(rr.Choice(1,
 
 ---
 
-# Term
-
-<Railroad diagram={
-rr.Diagram(rr.Choice(2,
-    rr.Sequence(Red("IDENT"), "NameRef", "Type"),
-    rr.Sequence(Red("SELECT"), "NameRef", "Term"),
-    rr.Sequence(Red("APPLY"), "fun: Term", rr.ZeroOrMore("arg: Term")),
-    rr.Sequence(Red("IF"), "cond: Term", "then: Term", "else: Term"),
-    rr.Comment("...")
-))
-} />
-
----
-
 # Type
 
 <Railroad diagram={
@@ -385,6 +647,20 @@ rr.Diagram(rr.Choice(2,
     rr.Sequence(Red("TERMREF"), "NameRef", "qual: Type"),
     rr.Sequence(Red("TYPEBOUNDS"), "low: Type", "high: Type"),
     rr.Sequence(Red("APPLIEDtype"), "type constructor: Type", rr.ZeroOrMore("argument: Type")),
+    rr.Comment("...")
+))
+} />
+
+---
+
+# Term
+
+<Railroad diagram={
+rr.Diagram(rr.Choice(2,
+    rr.Sequence(Red("IDENT"), "NameRef", "Type"),
+    rr.Sequence(Red("SELECT"), "NameRef", "Term"),
+    rr.Sequence(Red("APPLY"), "fun: Term", rr.ZeroOrMore("arg: Term")),
+    rr.Sequence(Red("IF"), "cond: Term", "then: Term", "else: Term"),
     rr.Comment("...")
 ))
 } />
@@ -426,30 +702,62 @@ rr.Diagram(
 
 ---
 
-# Tasty binary format
+# Full grammar
 
-- xx copy from prev presentation
-- preserve all information that cannot be recreated
-- make sure useful info has not been lost in a previous phase (final val)
+See `TastyFormat.scala` in [github.com/lampepfl/dotty](github.com/lampepfl/dotty)
 
 ---
 
-# Compiler pipeline
+# OK cool, but what can I do with it ?
 
-<Graphviz dot={[`
-digraph {
-bgcolor=transparent;
-rankdir=LR;
-node [fontsize="28.0", fontname="Source Sans Pro", shape="box"];
-me [label="Middle-End"];
-src [label="Hello.scala", shape="note"];
-tst [label="Hello.tasty", shape="note"];
-dst [label="Hello.class", shape="note"];
-{ rank=same src Parser }
-{ rank=same Pickler tst }
-{ rank=same Backend dst }
-src -> Parser -> Typer -> Pickler -> me -> Backend -> dst;
-Pickler -> tst;
-}
-`]} />
+<ul>
+  <Appear>
+  <li>Problem: Library <b>A</b> is compiled with Scala 3.1, I'd like to use it with Scala
+  3.2</li>
+  <li>Solution: Fetch the .jar for <b>A</b>, delete the .class files, regenerate
+  them from the .tasty files</li>
+  <li>Could be handled by the build tool</li>
+  <li>Or by a remote package repository</li>
+  <li>Not a silver bullet: only works if standard library of 3.2 is compatible
+  with 3.1</li>
+  </Appear>
+</ul>
 
+---
+
+# Tooling around Tasty
+
+<ul>
+  <Appear>
+    <li>Generate .tasty files: running Dotty will produce both .tasty and .class files</li>
+    <li>Compile from .tasty files: run <span style={{fontFamily: "Fira Mono"}}>dotc -from-tasty</span></li>
+    <li>Decompile .tasty files: run <span style={{fontFamily: "Fira Mono"}}>dotc
+  -decompile</span> or open it in VSCode</li>
+  </Appear>
+</ul>
+
+---
+
+# In progress: Scala 2 plugin
+
+<ul>
+  <Appear>
+    <li>Implemented proof-of-concept Scala 2 ➡️  .tasty last year</li>
+    <li>Need to move Tasty serialization logic out of Dotty into its own project</li>
+    <li>.tasty ➡️ Scala 2 would allow using Dotty libraries in Scala 2 projects</li>
+  </Appear>
+</ul>
+
+---
+
+# Bonus: tasty-reflect for tooling
+
+<ul>
+  <Appear>
+    <li>Directly manipulating tasty trees is not easy</li>
+    <li>Instead, prefer using tasty-reflect, provides similar API to Scala 2 macros</li>
+    <li>.tasty ➡️ .semanticdb (incomplete): <a href="github.com/lampepfl/dotty/tree/master/semanticdb">https://github.com/lampepfl/dotty/tree/master/semanticdb</a></li>
+    <li>.tasty ➡️ HTML documentation: not merged yet</li>
+    <li>See Nicolas' talk on Metaprogramming tomorrow for more information.</li>
+  </Appear>
+</ul>
