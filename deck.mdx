@@ -3,207 +3,22 @@ import { CodeSurferLayout } from "code-surfer";
 import "prismjs/components/prism-java";
 import "prismjs/components/prism-scala";
 
-<!-- import { Mermaid } from "./mermaid"; -->
 import { Graphviz } from "./Graphviz";
 import { Railroad, Red } from "./Railroad";
 import rr from "railroad-diagrams";
 
 import { github } from "code-surfer";
+
+import { dark } from 'mdx-deck/themes';
 import myTheme from './myTheme';
 
-export const themes = [github, myTheme]
+export const themes = [myTheme];
 
-import "railroad-diagrams/railroad-diagrams.css"
-import "./railroad-custom.css"
+import "./fonts.css";
 
-# :evergreen_tree: :evergreen_tree: :evergreen_tree:
-
-# Future-proofing Scala through Tasty
+# Scala 3, type inference and you!
 
 Guillaume Martres - EPFL
-
-# :evergreen_tree: :evergreen_tree: :evergreen_tree:
-
----
-
-# Upgrading Scala
-
-<Graphviz dot={[
-`
-digraph {
-bgcolor=transparent;
-rankdir=BT;
-node [fontsize="38.0", fontname="Source Sans Pro", shape="box", style="filled", fillcolor="#dbe2ef"];
-app [label="MyAwesomeApp"]
-app
-}
-`,
-`
-digraph {
-bgcolor=transparent;
-rankdir=BT;
-node [fontsize="38.0", fontname="Source Sans Pro", shape="box", style="filled", fillcolor="#dbe2ef"];
-app [label="MyAwesomeApp_2.12"]
-stdlib [label="scala-library_2.12"]
-app -> stdlib
-}
-`,
-`
-digraph {
-bgcolor=transparent;
-rankdir=BT;
-node [fontsize="38.0", fontname="Source Sans Pro", shape="box", style="filled", fillcolor="#dbe2ef"];
-app [label="MyAwesomeApp_2.13", fillcolor="#eaffd0"]
-stdlib [label="scala-library_2.13", fillcolor="#eaffd0"];
-app -> stdlib;
-}
-`
-,
-`
-digraph {
-bgcolor=transparent;
-rankdir=BT;
-node [fontsize="38.0", fontname="Source Sans Pro", shape="box", style="filled", fillcolor="#dbe2ef"];
-app [label="MyAwesomeApp_2.13", fillcolor="#eaffd0"]
-a [label="A_2.12"]
-b [label="B_2.12"]
-stdlib [label="scala-library_2.13", fillcolor="#eaffd0"];
-app -> a [color="red", label="❌"];
-a -> stdlib [color="red", label="❌"];
-app -> b [color="red", label="❌"];
-b -> stdlib [color="red", label="❌"];
-}
-`
-,
-`
-digraph {
-bgcolor=transparent;
-rankdir=BT;
-node [fontsize="38.0", fontname="Source Sans Pro", shape="box", style="filled", fillcolor="#dbe2ef"];
-app [label="MyAwesomeApp_2.13", fillcolor="#eaffd0"]
-a [label="A_2.12"]
-b [label="B_2.12"]
-x [label="X_2.12"]
-y [label="Y_2.12"]
-z [label="Z_2.12"]
-stdlib [label="scala-library_2.13", fillcolor="#eaffd0"];
-app -> a [color="red", label="❌"];
-app -> b [color="red", label="❌"];
-a -> x;
-x -> stdlib [color="red", label="❌"];
-a -> y;
-y -> stdlib [color="red", label="❌"];
-b -> y;
-b -> z;
-z -> stdlib [color="red", label="❌"];
-}
-`
-,
-`
-digraph {
-bgcolor=transparent;
-rankdir=BT;
-node [fontsize="38.0", fontname="Source Sans Pro", shape="box", style="filled", fillcolor="#dbe2ef"];
-app [label="MyAwesomeApp_2.13", fillcolor="#eaffd0"]
-a [label="A_2.12"]
-b [label="B_2.12"]
-x [label="X_2.13", fillcolor="#eaffd0"]
-y [label="Y_2.13", fillcolor="#eaffd0"]
-z [label="Z_2.13", fillcolor="#eaffd0"]
-stdlib [label="scala-library_2.13", fillcolor="#eaffd0"];
-app -> a [color="red", label="❌"];
-app -> b [color="red", label="❌"];
-a -> x [color="red", label="❌"];
-x -> stdlib;
-a -> y [color="red", label="❌"];
-y -> stdlib;
-b -> y [color="red", label="❌"];
-b -> z [color="red", label="❌"];
-z -> stdlib;
-}
-`
-,
-`
-digraph {
-bgcolor=transparent;
-rankdir=BT;
-node [fontsize="38.0", fontname="Source Sans Pro", shape="box", style="filled", fillcolor="#dbe2ef"];
-app [label="MyAwesomeApp_2.13", fillcolor="#eaffd0"]
-a [label="A_2.13", fillcolor="#eaffd0"]
-b [label="B_2.13", fillcolor="#eaffd0"]
-x [label="X_2.13", fillcolor="#eaffd0"]
-y [label="Y_2.13", fillcolor="#eaffd0"]
-z [label="Z_2.13", fillcolor="#eaffd0"]
-stdlib [label="scala-library_2.13", fillcolor="#eaffd0"];
-app -> a;
-app -> b;
-a -> x -> stdlib;
-a -> y -> stdlib;
-b -> y;
-b -> z -> stdlib;
-}
-`
-,
-]} />
-
----
-
-# What is binary compatibility ?
-
-<ul>
-  <Appear>
-<li>Project <b>A</b> is compiled against version <b>X</b> of project <b>B</b></li>
-    <li>Project <b>A</b> is run with agaisnt version <b>Y</b> of project <b>B</b></li>
-    <li>If this doesn't work, versions <b>X</b> and <b>Y</b> are <em>binary-incompatible</em></li>
-    <li>More details: <a href="https://www.youtube.com/watch?v=2wkEX6MCxJs">Designing libraries for source and binary compatibility</a> by Sébastien Doeraene</li>
-  </Appear>
-</ul>
-
----
-
-# Why does Scala break binary compatibility ?
-
-<ul>
-  <Appear>
-    <li>Some changes are hard/impossible to make otherwise</li>
-    <li>2.11 ➡️ 2.12: new encoding for traits, based on Java 8 default methods</li>
-    <li>2.12 ➡️ 2.13: redesigned collection hierarchy</li>
-    <li>"There's always a good reason"</li>
-  </Appear>
-</ul>
-
----
-
-# Can we maintain compatibility while still evolving Scala ?
-
-I don't know, but it seems worth trying.
-
----
-
-# Case study: Scala.js
-
-<ul>
-  <Appear>
-  <li>Basically its own compiler, masquerading as a compiler plugin</li>
-  <li>Has maintained binary compatibility for <em>more than 4 years</em></li>
-  <li>Scala.js-compiled jars do not contain <b>.js</b> files</li>
-  <li>Instead, uses its own custom intermediate representation: <b>.sjsir</b></li>
-  <li>When compiling your own project, the Scala.js linker will use the .sjsir
-  files of all your dependencies as input to produce JavaScript.</li>
-  </Appear>
-</ul>
-
----
-
-# The plan
-
-<ul>
-  <Appear>
-  <li>Let's make our own format!</li>
-  <li>It will store the output of one of the compiler phase</li>
-  <li>But where should we put it in the compiler pipeline exactly ?</li>
-  </Appear>
-</ul>
 
 ---
 
@@ -214,7 +29,7 @@ I don't know, but it seems worth trying.
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro, Noto Color Emoji", shape="box"];
 magic [label="✨ Magic ✨", style="filled", fillcolor="#d6c8ff"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
@@ -226,7 +41,7 @@ src -> magic -> dst;
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro, Noto Color Emoji", shape="box"];
 magic [label="✨ Magic ✨", style="filled", fillcolor="#d6c8ff"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
@@ -248,7 +63,7 @@ digraph {
 margin=1.0;
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled", fillcolor="#cde498"];
+node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled", fillcolor="#cde498"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident -> obj
 labelloc="t";
@@ -262,7 +77,7 @@ digraph {
 margin=0.5;
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled"];
+node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident -> obj
 node [fillcolor="#cde498"];
@@ -279,7 +94,7 @@ label=<             <b>obj.elem</b>                    >;
 digraph {
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled"];
+node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident -> obj
 elem [label="\\\"elem\\\"", style="filled"]
@@ -304,7 +119,7 @@ label=<             <b>obj.elem(5)</b>                    >;
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro, Noto Color Emoji", shape="box"];
 magic [label="✨ Magic ✨", style="filled", fillcolor="#d6c8ff"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
@@ -317,7 +132,7 @@ src -> Parser -> magic -> dst;
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro, Noto Color Emoji", shape="box"];
 magic [label="✨ Magic ✨", style="filled", fillcolor="#d6c8ff"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
@@ -338,7 +153,7 @@ src -> Parser -> Typer -> magic -> dst;
 digraph {
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled"];
+node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident -> obj
 elem [label="\\\"elem\\\"", style="filled"]
@@ -354,7 +169,7 @@ Literal -> 5
 digraph {
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled"];
+node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident -> obj
 elem [label="\\\"elem\\\"", style="filled"]
@@ -370,7 +185,7 @@ Literal -> 5
 digraph {
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled"];
+node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident -> obj
 elem [label="\\\"elem\\\"", style="filled"]
@@ -386,7 +201,7 @@ Literal -> 5
 digraph {
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled"];
+node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident [shape="record", label="Ident | A.obj", fillcolor="#fae3d9"]
 Ident -> obj
@@ -403,7 +218,7 @@ Literal -> 5
 digraph {
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled"];
+node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident [shape="record", label="Ident | A.obj", fillcolor="#fae3d9"]
 Select [shape="record", label="Select | A.obj.elem: Int =\\\> Int", fillcolor="#fae3d9"]
@@ -421,7 +236,7 @@ Literal -> 5
 digraph {
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled"];
+node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident [shape="record", label="Ident | A.obj", fillcolor="#fae3d9"]
 Select [shape="record", label="Select | A.obj.elem: Int =\\\> Int", fillcolor="#fae3d9"]
@@ -440,7 +255,7 @@ Literal -> 5
 digraph {
 bgcolor=transparent;
 rankdir=TB;
-node [shape="box", fontname="Source Sans Pro", fontsize="38.0", style="rounded, filled"];
+node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
 obj [label="\\\"obj\\\"", style="filled"]
 Ident [shape="record", label="Ident | A.obj", fillcolor="#fae3d9"]
 Select [shape="record", label="Select | A.obj.elem: Int =\\\> Int", fillcolor="#fae3d9"]
@@ -477,7 +292,7 @@ Literal -> 5
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro, Noto Color Emoji", shape="box"];
 magic [label="✨ Magic ✨", style="filled", fillcolor="#d6c8ff"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
@@ -490,7 +305,7 @@ src -> Parser -> Typer -> magic -> dst;
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro, Noto Color Emoji", shape="box"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
 { rank=same src Parser }
@@ -502,7 +317,7 @@ src -> Parser -> Typer -> Pickler -> "Middle-End" -> Backend -> dst;
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro, Noto Color Emoji", shape="box"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
 Pickler [ style="bold", color="red"];
@@ -515,7 +330,7 @@ src -> Parser -> Typer -> Pickler -> "Middle-End" -> Backend -> dst;
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro, Noto Color Emoji", shape="box"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
 "Middle-End" [ style="bold", color="red"];
@@ -528,7 +343,7 @@ src -> Parser -> Typer -> Pickler -> "Middle-End" -> Backend -> dst;
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro, Noto Color Emoji", shape="box"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
 Backend [ style="bold", color="red"];
@@ -541,7 +356,7 @@ src -> Parser -> Typer -> Pickler -> "Middle-End" -> Backend -> dst;
 digraph {
 bgcolor=transparent;
 rankdir=LR;
-node [fontsize="38.0", fontname="Source Sans Pro", shape="box"];
+node [fontsize="38.0", fontname="Source Sans Pro, Noto Color Emoji", shape="box"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
 tst [label="Hello.tasty", shape="note", style="bold, filled", fillcolor="#f8f3d4", color="red"];
