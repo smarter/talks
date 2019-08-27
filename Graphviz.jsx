@@ -19,8 +19,8 @@ export function Graphviz(props) {
     setIndex(deckState.index);
 
   const step = useSteps(props.dot.length - 1);
-  // console.log("step: ", step, " index: ", index, " deckState.index: ", deckState.index);
-  const active = index === deckState.index;
+  const active = index === deckState.index && step < props.dot.length;
+  // console.log("step: ", step, " index: ", index, " deckState.index: ", deckState.index, " length: ", props.dot.length, " active: ", active);
   
   useEffect(() => {
     function options() {
