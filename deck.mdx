@@ -9,12 +9,12 @@ import rr from "railroad-diagrams";
 
 import { github } from "code-surfer";
 
-import { dark } from 'mdx-deck/themes';
+import { dark, prism } from 'mdx-deck/themes';
 import myTheme from './myTheme';
 
-export const themes = [myTheme];
+export const themes = [prism, myTheme];
 
-import "./fonts.css";
+import "./custom.css";
 
 # Scala 3, type inference and you!
 
@@ -62,14 +62,24 @@ src -> Parser -> magic -> dst;
 digraph {
 margin=1.0;
 bgcolor=transparent;
-rankdir=TB;
-node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled", fillcolor="#cde498"];
-obj [label="\\\"obj\\\"", style="filled"]
-Ident -> obj
 labelloc="t";
 fontname="Fira Mono";
 fontsize="50.0";
-label=< <b>obj</b>  >;
+label=< <b>foo</b>  <b>.elem(5)</b>  >;
+}
+`,
+`
+digraph {
+margin=1.0;
+bgcolor=transparent;
+rankdir=TB;
+node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled", fillcolor="#cde498"];
+foo [label="\\\"foo\\\"", style="filled", fontcolor="#b36232"]
+Ident -> foo
+labelloc="t";
+fontname="Fira Mono";
+fontsize="50.0";
+label=< <b>foo</b>  >;
 }
 `,
 `
@@ -78,16 +88,16 @@ margin=0.5;
 bgcolor=transparent;
 rankdir=TB;
 node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
-obj [label="\\\"obj\\\"", style="filled"]
-Ident -> obj
+foo [label="\\\"foo\\\"", style="filled", fontcolor="#b36232"]
+Ident -> foo
 node [fillcolor="#cde498"];
-elem [label="\\\"elem\\\"", style="filled"]
+elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
 Select -> Ident
 Select -> elem
 labelloc="t";
 fontname="Fira Mono";
 fontsize="50.0";
-label=<             <b>obj.elem</b>                    >;
+label=<             <b>foo.elem</b>                    >;
 }
 `,
 `
@@ -95,19 +105,19 @@ digraph {
 bgcolor=transparent;
 rankdir=TB;
 node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
-obj [label="\\\"obj\\\"", style="filled"]
-Ident -> obj
-elem [label="\\\"elem\\\"", style="filled"]
+foo [label="\\\"foo\\\"", style="filled", fontcolor="#b36232"]
+Ident -> foo
+elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
 Select -> Ident
 Select -> elem
 node [fillcolor="#cde498"];
-5 [style="filled"]
+5 [style="filled", fontcolor="#b36232"]
   Apply -> Select
 Apply -> Literal -> 5
 labelloc="t";
 fontname="Fira Mono";
 fontsize="50.0";
-label=<             <b>obj.elem(5)</b>                    >;
+label=<             <b>foo.elem(5)</b>                    >;
 }
 `,
 ]} />
@@ -148,18 +158,32 @@ src -> Parser -> Typer -> magic -> dst;
 
 # Typing
 
+```scala
+class A {
+  def elem(x: Int): Int
+  def elem(x: String): String
+}
+val foo: A
+// Expression to type
+foo.elem(5)
+```
+
+---
+
+# Typing
+
 <Graphviz dot={[
 `
 digraph {
 bgcolor=transparent;
 rankdir=TB;
 node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
-obj [label="\\\"obj\\\"", style="filled"]
-Ident -> obj
-elem [label="\\\"elem\\\"", style="filled"]
+foo [label="\\\"foo\\\"", style="filled", fontcolor="#b36232"]
+Ident -> foo
+elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
 Select -> Ident
 Select -> elem
-5 [style="filled"]
+5 [style="filled", fontcolor="#b36232"]
 Apply -> Select
 Apply -> Literal
 Literal -> 5
@@ -170,13 +194,13 @@ digraph {
 bgcolor=transparent;
 rankdir=TB;
 node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
-obj [label="\\\"obj\\\"", style="filled"]
-Ident -> obj
-elem [label="\\\"elem\\\"", style="filled"]
+foo [label="\\\"foo\\\"", style="filled", fontcolor="#b36232"]
+Ident -> foo
+elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
 Select -> Ident
 Select -> elem
-5 [style="filled"]
-Apply -> Select [color="red"];
+5 [style="filled", fontcolor="#b36232"]
+Apply -> Select [color="red", label="?(...)"];
 Apply -> Literal
 Literal -> 5
 }
@@ -186,13 +210,13 @@ digraph {
 bgcolor=transparent;
 rankdir=TB;
 node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
-obj [label="\\\"obj\\\"", style="filled"]
-Ident -> obj
-elem [label="\\\"elem\\\"", style="filled"]
+foo [label="\\\"foo\\\"", style="filled", fontcolor="#b36232"]
+Ident -> foo
+elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
 Select -> Ident [color="red"];
 Select -> elem
-5 [style="filled"]
-Apply -> Select [color="red"];
+5 [style="filled", fontcolor="#b36232"]
+Apply -> Select [color="red", label="?(...)"];
 Apply -> Literal
 Literal -> 5
 }
@@ -202,14 +226,14 @@ digraph {
 bgcolor=transparent;
 rankdir=TB;
 node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
-obj [label="\\\"obj\\\"", style="filled"]
-Ident [shape="record", label="Ident | A.obj", fillcolor="#fae3d9"]
-Ident -> obj
-elem [label="\\\"elem\\\"", style="filled"]
-Select -> Ident [color="red"];
+foo [label="\\\"foo\\\"", style="filled", fontcolor="#b36232"]
+Ident [shape="record", label="Ident | foo.type", fillcolor="#fae3d9"]
+Ident -> foo
+elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
+Select -> Ident [color="red", label="?.elem"];
 Select -> elem
-5 [style="filled"]
-Apply -> Select [color="red"];
+5 [style="filled", fontcolor="#b36232"]
+Apply -> Select [color="red", label="?(...)"];
 Apply -> Literal
 Literal -> 5
 }
@@ -219,15 +243,15 @@ digraph {
 bgcolor=transparent;
 rankdir=TB;
 node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
-obj [label="\\\"obj\\\"", style="filled"]
-Ident [shape="record", label="Ident | A.obj", fillcolor="#fae3d9"]
-Select [shape="record", label="Select | A.obj.elem: Int =\\\> Int", fillcolor="#fae3d9"]
-Ident -> obj
-elem [label="\\\"elem\\\"", style="filled"]
+foo [label="\\\"foo\\\"", style="filled", fontcolor="#b36232"]
+Ident [shape="record", label="Ident | foo.type", fillcolor="#fae3d9"]
+Select [shape="record", label="Select | foo.elem.type", fillcolor="#fae3d9"]
+Ident -> foo
+elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
 Select -> Ident;
 Select -> elem
-5 [style="filled"]
-Apply -> Select [color="red"];
+5 [style="filled", fontcolor="#b36232"]
+Apply -> Select [color="red", label="?(...)"];
 Apply -> Literal
 Literal -> 5
 }
@@ -237,17 +261,17 @@ digraph {
 bgcolor=transparent;
 rankdir=TB;
 node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
-obj [label="\\\"obj\\\"", style="filled"]
-Ident [shape="record", label="Ident | A.obj", fillcolor="#fae3d9"]
-Select [shape="record", label="Select | A.obj.elem: Int =\\\> Int", fillcolor="#fae3d9"]
+foo [label="\\\"foo\\\"", style="filled", fontcolor="#b36232"]
+Ident [shape="record", label="Ident | foo.type", fillcolor="#fae3d9"]
+Select [shape="record", label="Select | foo.elem.type", fillcolor="#fae3d9"]
 Literal [shape="record", label="Literal | 5", fillcolor="#fae3d9"]
-Ident -> obj
-elem [label="\\\"elem\\\"", style="filled"]
+Ident -> foo
+elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
 Select -> Ident;
 Select -> elem
-5 [style="filled"]
-Apply -> Select
-Apply -> Literal [color="red"];
+5 [style="filled", fontcolor="#b36232"]
+Apply -> Select [color="red", label="?(Int)"];
+Apply -> Literal;
 Literal -> 5
 }
 `,
@@ -256,16 +280,54 @@ digraph {
 bgcolor=transparent;
 rankdir=TB;
 node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
-obj [label="\\\"obj\\\"", style="filled"]
-Ident [shape="record", label="Ident | A.obj", fillcolor="#fae3d9"]
-Select [shape="record", label="Select | A.obj.elem: Int =\\\> Int", fillcolor="#fae3d9"]
+foo [label="\\\"foo\\\"", style="filled", fontcolor="#b36232"]
+Ident [shape="record", label="Ident | foo.type", fillcolor="#fae3d9"]
+Select [shape="record", label="Select | foo.elem.type", fillcolor="#fae3d9"]
+Literal [shape="record", label="Literal | 5", fillcolor="#fae3d9"]
+Ident -> foo
+elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
+Select -> Ident;
+Select -> elem
+5 [style="filled", fontcolor="#b36232"]
+Apply -> Select [color="red", label="?(Int)"];
+Apply -> Literal;
+Literal -> 5
+}
+`,
+`
+digraph {
+bgcolor=transparent;
+rankdir=TB;
+node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
+foo [label="\\\"foo\\\"", style="filled", fontcolor="#b36232"]
+Ident [shape="record", label="Ident | foo.type", fillcolor="#fae3d9"]
+Select [shape="record", label="Select | foo.elem.type \\(Int \\=\\> Int\\)", fillcolor="#fae3d9"]
+Literal [shape="record", label="Literal | 5", fillcolor="#fae3d9"]
+Ident -> foo
+elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
+Select -> Ident;
+Select -> elem
+5 [style="filled", fontcolor="#b36232"]
+Apply -> Select;
+Apply -> Literal;
+Literal -> 5
+}
+`,
+`
+digraph {
+bgcolor=transparent;
+rankdir=TB;
+node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
+foo [label="\\\"foo\\\"", style="filled", fontcolor="#b36232"]
+Ident [shape="record", label="Ident | foo.type", fillcolor="#fae3d9"]
+Select [shape="record", label="Select | foo.elem.type", fillcolor="#fae3d9"]
 Literal [shape="record", label="Literal | 5", fillcolor="#fae3d9"]
 Apply [shape="record", label="Apply | Int", fillcolor="#fae3d9"]
-Ident -> obj
-elem [label="\\\"elem\\\"", style="filled"]
+Ident -> foo
+elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
 Select -> Ident;
 Select -> elem
-5 [style="filled"]
+5 [style="filled", fontcolor="#b36232"]
 Apply -> Select
 Apply -> Literal
 Literal -> 5

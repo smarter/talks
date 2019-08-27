@@ -2,3 +2,6 @@
     font-family: "Noto Color Emoji";
     src: require("./NotoColorEmoji.ttf");
 }
+pre {
+    background: none !important;
+}
