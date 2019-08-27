@@ -6,15 +6,14 @@
     "build": "mdx-deck build deck.mdx",
     "test": "echo \"there are no tests\""
   },
-  "devDependencies": {
-    "code-surfer": "https://github.com/pomber/code-surfer#db88c1cc2caf1b917f5ae8179ed8de3cb1bdd823",
-    "d3-graphviz": "^2.6.1",
-    "graphviz-react": "^1.0.2",
-    "mdx-deck": "2.3.2",
-    "mermaid": "^8.0.0"
-  },
   "name": "my-deck",
   "dependencies": {
-    "railroad-diagrams": "https://github.com/tabatkins/railroad-diagrams#c889ecc"
+    "@babel/core": "^7.5.5",
+    "code-surfer": "^3.0.0-alpha.1",
+    "d3": "^4.13.0",
+    "d3-graphviz": "^2.6.1",
+    "graphviz-react": "^1.0.4",
+    "mdx-deck": "^3.0.9",
+    "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams.git#c889ecc"
   }
 }

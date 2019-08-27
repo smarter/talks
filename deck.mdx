@@ -3,22 +3,18 @@ import { CodeSurferLayout } from "code-surfer";
 import "prismjs/components/prism-java";
 import "prismjs/components/prism-scala";
 
-import { Mermaid } from "./mermaid";
+<!-- import { Mermaid } from "./mermaid"; -->
 import { Graphviz } from "./Graphviz";
 import { Railroad, Red } from "./Railroad";
 import rr from "railroad-diagrams";
 
-import { githubFull } from "code-surfer/themes";
+import { github } from "code-surfer";
 import myTheme from './myTheme';
 
-export const themes = [githubFull, myTheme]
+export const themes = [github, myTheme]
 
-<Head>
-  <link rel="stylesheet"
-  href={require("railroad-diagrams/railroad-diagrams.css")} />
-  <link rel="stylesheet"
-  href={require("./railroad-custom.css")} />
-</Head>
+import "railroad-diagrams/railroad-diagrams.css"
+import "./railroad-custom.css"
 
 # :evergreen_tree: :evergreen_tree: :evergreen_tree:
 
