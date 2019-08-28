@@ -4,6 +4,7 @@
 }
 pre {
     background: none !important;
+    padding: 0em !important;
 }
 code {
     /* Keep synchronized with myTheme.js */

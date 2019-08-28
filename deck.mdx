@@ -374,16 +374,27 @@ id(1) // How is this typed?
 
 ---
 
-```scala
-def id[T](x: T): T = x
-id(1) // How is this typed?
-```
-<ol>
+# The art of <span style="color: #930077;">instantiation</span>
+
+<ul>
+<li><b>When</b> should a type variable be <span style="color: #930077;">instantiated</span>?</li>
+<ul>
 <Appear>
-<li>Typing foo creates a type variable <span style="font-family: Fira Mono;">T?</span></li>
-<span><pre class="language-scala"><code>def id[T]: T = x</code></pre></span>
+<li>If <b>too early</b>: miss <span style="color: #ff80ae;">constraints</span>.</li>
+<li>If <b>too late</b>: typechecking gets stuck.</li>
+<li>Solution: <b>be lazy, do it on-demand!</b></li>
 </Appear>
-</ol>
+</ul>
+<li><b>What</b> should <span style="font-family: Fira Mono;"><span style="color:#00a2b3;">T?</span> <span style="color: #ff80ae;">&gt;: Lo &lt;: Hi</span></span> be <span style="color: #930077;">instantiated</span> to?</li>
+<Appear>
+<span></span>
+<span></span>
+<span></span>
+<li>If <span style="font-family: Fira Mono;"><span style="color:
+#ff80ae;">Lo</span> =:= <span style="color: #ff80ae;">Hi</span></span></li>
+<li>If too late: typechecking gets stuck.</li>
+</Appear>
+</ul>
 
 ---
 

@@ -5,9 +5,9 @@ const blue = '#2d5dd7'
 // Based on book theme
 export default {
   fonts: {
-    body: '"Crimson Text", Noto Color Emoji, serif',
+    body: 'Lora, Noto Color Emoji, serif',
   },
-  googleFont: 'https://fonts.googleapis.com/css?family=Fira+Mono|Source+Sans+Pro|Crimson+Text',
+  googleFont: 'https://fonts.googleapis.com/css?family=Fira+Mono:400,500,700|Source+Sans+Pro:400,400i,700,700i|Crimson+Text:400,400i,600,600i,700,700i|Lora:400,400i,700,700i',
   colors: {
     text: black,
     background: white,
