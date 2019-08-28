@@ -377,23 +377,28 @@ id(1) // How is this typed?
 # The art of <span style="color: #930077;">instantiation</span>
 
 <ul>
-<li><b>When</b> should a type variable be <span style="color: #930077;">instantiated</span>?</li>
+<li><b>When</b> should a <span style="color:#00a2b3;">type variable</span> be <span style="color: #930077;">instantiated</span>?</li>
 <ul>
 <Appear>
-<li>If <b>too early</b>: miss <span style="color: #ff80ae;">constraints</span>.</li>
-<li>If <b>too late</b>: typechecking gets stuck.</li>
-<li>Solution: <b>be lazy, do it on-demand!</b></li>
+<li>If <b>too early</b>: miss <span style="color: #ff80ae;">constraints</span></li>
+<li>If <b>too late</b>: typechecking gets stuck</li>
+<li>Solution: be lazy, do it only <b>when necessary</b></li>
 </Appear>
 </ul>
-<li><b>What</b> should <span style="font-family: Fira Mono;"><span style="color:#00a2b3;">T?</span> <span style="color: #ff80ae;">&gt;: Lo &lt;: Hi</span></span> be <span style="color: #930077;">instantiated</span> to?</li>
+<li><b>What</b> should <span style="font-family: Fira Mono;"><span
+style="color:#00a2b3;">T?</span> <span style="color: #ff80ae;">&gt;: Lo &lt;:
+Hi</span></span> be <span style="color: #930077;">instantiated</span> to?</li>
+<ul>
 <Appear>
 <span></span>
 <span></span>
 <span></span>
 <li>If <span style="font-family: Fira Mono;"><span style="color:
-#ff80ae;">Lo</span> =:= <span style="color: #ff80ae;">Hi</span></span></li>
-<li>If too late: typechecking gets stuck.</li>
+#ff80ae;">Lo</span> =:= <span style="color: #ff80ae;">Hi</span></span>, just
+pick one arbitrarily</li>
+<li>Otherwise, look at the <b>position</b> of <span style="font-family: Fira Mono; color:#00a2b3;">T?</span></li>
 </Appear>
+</ul>
 </ul>
 
 ---
