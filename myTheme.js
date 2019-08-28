@@ -13,6 +13,8 @@ export default {
     background: white,
     link: blue,
   },
+  // Keep synchronized with custom.css
+  monospace: "'Fira Mono', monospace",
 }
 
 // const Provider = props => (

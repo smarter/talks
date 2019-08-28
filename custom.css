@@ -5,3 +5,7 @@
 pre {
     background: none !important;
 }
+code {
+    /* Keep synchronized with myTheme.js */
+    font-family: 'Fira Mono', monospace !important;
+}

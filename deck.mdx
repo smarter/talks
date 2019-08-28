@@ -45,7 +45,7 @@ node [fontsize="38.0", fontname="Source Sans Pro, Noto Color Emoji", shape="box"
 magic [label="✨ Magic ✨", style="filled", fillcolor="#d6c8ff"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
-Parser [ style="bold", color="red"];
+Parser [ style="bold", color="#ef4b4b"];
 { rank=same src Parser }
 { rank=same magic dst }
 src -> Parser -> magic -> dst;
@@ -146,7 +146,7 @@ node [fontsize="38.0", fontname="Source Sans Pro, Noto Color Emoji", shape="box"
 magic [label="✨ Magic ✨", style="filled", fillcolor="#d6c8ff"];
 src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
 dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
-Typer [ style="bold", color="red"];
+Typer [ style="bold", color="#ef4b4b"];
 { rank=same src Parser }
 { rank=same magic dst }
 src -> Parser -> Typer -> magic -> dst;
@@ -200,7 +200,7 @@ elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
 Select -> Ident
 Select -> elem
 5 [style="filled", fontcolor="#b36232"]
-Apply -> Select [color="red", label="?(...)"];
+Apply -> Select [color="#ef4b4b", fontcolor="#ef4b4b", label="?(...)"];
 Apply -> Literal
 Literal -> 5
 }
@@ -213,10 +213,10 @@ node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0"
 foo [label="\\\"foo\\\"", style="filled", fontcolor="#b36232"]
 Ident -> foo
 elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
-Select -> Ident [color="red"];
+Select -> Ident [color="#ef4b4b"];
 Select -> elem
 5 [style="filled", fontcolor="#b36232"]
-Apply -> Select [color="red", label="?(...)"];
+Apply -> Select [color="#ef4b4b", fontcolor="#ef4b4b", label="?(...)"];
 Apply -> Literal
 Literal -> 5
 }
@@ -227,13 +227,13 @@ bgcolor=transparent;
 rankdir=TB;
 node [shape="box", fontname="Source Sans Pro, Noto Color Emoji", fontsize="38.0", style="rounded, filled"];
 foo [label="\\\"foo\\\"", style="filled", fontcolor="#b36232"]
-Ident [shape="record", label="Ident | foo.type", fillcolor="#fae3d9"]
+    Ident [shape="record", label="Ident | foo.type", fillcolor="#fae3d9"]
 Ident -> foo
 elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
-Select -> Ident [color="red", label="?.elem"];
+Select -> Ident [color="#ef4b4b", fontcolor="#ef4b4b", label="?.elem"];
 Select -> elem
 5 [style="filled", fontcolor="#b36232"]
-Apply -> Select [color="red", label="?(...)"];
+Apply -> Select [color="#ef4b4b", fontcolor="#ef4b4b", label="?(...)"];
 Apply -> Literal
 Literal -> 5
 }
@@ -251,7 +251,7 @@ elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
 Select -> Ident;
 Select -> elem
 5 [style="filled", fontcolor="#b36232"]
-Apply -> Select [color="red", label="?(...)"];
+Apply -> Select [color="#ef4b4b", fontcolor="#ef4b4b", label="?(...)"];
 Apply -> Literal
 Literal -> 5
 }
@@ -270,7 +270,7 @@ elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
 Select -> Ident;
 Select -> elem
 5 [style="filled", fontcolor="#b36232"]
-Apply -> Select [color="red", label="?(Int)"];
+Apply -> Select [color="#ef4b4b", fontcolor="#ef4b4b", label="?(Int)"];
 Apply -> Literal;
 Literal -> 5
 }
@@ -289,7 +289,7 @@ elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
 Select -> Ident;
 Select -> elem
 5 [style="filled", fontcolor="#b36232"]
-Apply -> Select [color="red", label="?(Int)"];
+Apply -> Select [color="#ef4b4b", fontcolor="#ef4b4b", label="?(Int)"];
 Apply -> Literal;
 Literal -> 5
 }
@@ -337,320 +337,55 @@ Literal -> 5
 
 ---
 
-# Typing can create new trees
+# What if there's a type mismatch ?
 
 <ul>
+  The <b>computed type</b> of a tree might not match its <b
+  style="color: #ef4b4b;">expected type</b>.<br/>
   <Appear>
-    <li>List(1, 2) ➡️ List.apply(1, 2)</li>
-    <li>xs.max ➡️ xs.max(Ordering.Int)</li>
-    <li>Idempotency: retyping a typed tree will not create new tree</li>
+    <span>When this happens, the typechecker will attempt to <b style="color: #91b029;">adapt</b> the tree.</span>
+    <li><span style="font-family: Fira Mono;">List<span style="color: #ef4b4b;">(1, 2)</span></span></li>
+    <li><span style="font-family: Fira Mono;">↳List<span style="color: #91b029;">.apply</span><span style="color: #ef4b4b;">(1, 2)</span></span></li>
+    <li><span style="font-family: Fira Mono;"> xs.max <span style="color: #ef4b4b;">: Int</span></span></li>
+    <li><span style="font-family: Fira Mono;">↳xs.max<span style="color: #91b029;">(scala.math.Ordering.Int)</span> <span style="color: #ef4b4b;">: Int</span></span></li>
   </Appear>
 </ul>
 
 ---
 
-<Graphviz dot={[
-`
-digraph {
-bgcolor=transparent;
-rankdir=LR;
-node [fontsize="38.0", fontname="Source Sans Pro, Noto Color Emoji", shape="box"];
-magic [label="✨ Magic ✨", style="filled", fillcolor="#d6c8ff"];
-src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
-dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
-{ rank=same src Parser }
-{ rank=same magic dst }
-src -> Parser -> Typer -> magic -> dst;
-}
-`,
-`
-digraph {
-bgcolor=transparent;
-rankdir=LR;
-node [fontsize="38.0", fontname="Source Sans Pro, Noto Color Emoji", shape="box"];
-src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
-dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
-{ rank=same src Parser }
-{ rank=same Backend dst }
-src -> Parser -> Typer -> Pickler -> "Middle-End" -> Backend -> dst;
-}
-`,
-`
-digraph {
-bgcolor=transparent;
-rankdir=LR;
-node [fontsize="38.0", fontname="Source Sans Pro, Noto Color Emoji", shape="box"];
-src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
-dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
-Pickler [ style="bold", color="red"];
-{ rank=same src Parser }
-{ rank=same Backend dst }
-src -> Parser -> Typer -> Pickler -> "Middle-End" -> Backend -> dst;
-}
-`,
-`
-digraph {
-bgcolor=transparent;
-rankdir=LR;
-node [fontsize="38.0", fontname="Source Sans Pro, Noto Color Emoji", shape="box"];
-src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
-dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
-"Middle-End" [ style="bold", color="red"];
-{ rank=same src Parser }
-{ rank=same Backend dst }
-src -> Parser -> Typer -> Pickler -> "Middle-End" -> Backend -> dst;
-}
-`,
-`
-digraph {
-bgcolor=transparent;
-rankdir=LR;
-node [fontsize="38.0", fontname="Source Sans Pro, Noto Color Emoji", shape="box"];
-src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
-dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
-Backend [ style="bold", color="red"];
-{ rank=same src Parser }
-{ rank=same Backend dst }
-src -> Parser -> Typer -> Pickler -> "Middle-End" -> Backend -> dst;
-}
-`,
-`
-digraph {
-bgcolor=transparent;
-rankdir=LR;
-node [fontsize="38.0", fontname="Source Sans Pro, Noto Color Emoji", shape="box"];
-src [label="Hello.scala", shape="note", style="filled", fillcolor="#f8f3d4"];
-dst [label="Hello.class", shape="note", style="filled", fillcolor="#f8f3d4"];
-tst [label="Hello.tasty", shape="note", style="bold, filled", fillcolor="#f8f3d4", color="red"];
-{ rank=same src Parser }
-{ rank=same Pickler tst }
-{ rank=same Backend dst }
-src -> Parser -> Typer -> Pickler -> "Middle-End" -> Backend -> dst;
-Pickler -> tst [ style="bold", color="red"];
-}
-`,
-]} />
+# Type parameter inference
+
+```scala
+def id[T](x: T): T = x
+id(1) // How is this typed?
+```
+<ol>
+<Appear>
+<li><span style="color: #91b029;">Adapt</span> the expression by creating a <b style="color: #00a2b3;">type variable</b> for each missing type argument:</li>
+<span><span style="font-family: Fira Mono;">id<span style="color: #91b029;">[</span><span style="color: #00a2b3;">T?</span><span style="color: #91b029;">]</span>(1)</span></span>
+<li>Record the <b style="color: #ff80ae;">subtyping constraints</b> required for typechecking:</li>
+<span><span style="font-family: Fira Mono;"><span style="color:
+#00a2b3;">T?</span> <span style="color: #ff80ae;">&gt;: 1 &lt;: Any</span></span></span>
+<li>Finally, <b style="color: #930077;">instantiate</b> the <span style="color: #00a2b3;">type variable</span> to a type that satisfies its <span style="color: #ff80ae;">constraints</span>:<br/>
+    <span style="font-family: Fira Mono;"><span style="font-family: Fira Mono;">id<span style="color: #91b029;">[</span><span style="color: #930077;">Int</span><span style="color: #91b029;">]</span>(1)</span></span>
+</li>
+</Appear>
+</ol>
 
 ---
 
-# Tasty design goals
-
-<ul>
-  <Appear>
-    <li>Evolvable</li>
-    <li>As compact as possible (.jar size increase: &lt; 50%)</li>
-    <li>Preserve all the information needed for compilation</li>
-    <li>Contains extra information useful for tooling (IDE, REPL, scaladoc, ...)</li>
-  </Appear>
-</ul>
-
----
-
-# Tasty binary format
-
-<Railroad diagram={
-rr.Diagram(rr.Stack(
-  rr.Sequence(Red("0x5CA1AB1F"), "major version: Nat", "minor version: Nat"),
-  rr.Sequence("NameTable", rr.OneOrMore("Section"))
-))
-} />
+```scala
+def id[T](x: T): T = x
+id(1) // How is this typed?
+```
+<ol>
+<Appear>
+<li>Typing foo creates a type variable <span style="font-family: Fira Mono;">T?</span></li>
+<span><pre class="language-scala"><code>def id[T]: T = x</code></pre></span>
+</Appear>
+</ol>
 
 ---
-
-# NameTable
-
-<Railroad diagram={
-rr.Diagram("length: Nat", rr.OneOrMore("Name"))
-} />
-
----
-
-# Name
-
-<Railroad diagram={
-rr.Diagram(
-  rr.Choice(1,
-  rr.Sequence("UTF8Name"),
-  rr.Sequence("QualifiedName"),
-  rr.Sequence("DefaultGetterName"),
-  rr.Comment("...")
-  )
-)
-} />
-
----
-
-# UTF8Name
-
-<Railroad diagram={
-rr.Diagram(
-  Red("UTF8"), "length: Nat", rr.OneOrMore("UTF8-Codepoint")
-)
-} />
-
----
-
-# QualifiedName
-(for example: `scala.Int`)
-
-<Railroad diagram={
-rr.Diagram(
-  Red("QUALIFIED"), "length: Nat", "qualifier: NameRef", "selector: NameRef"
-)
-} />
-
----
-
-# ASTs section
-
-<Railroad diagram={
-rr.Diagram(
-  "\"ASTs\"", rr.OneOrMore("Statement")
-)
-} />
-
----
-
-# Statement
-
-<Railroad diagram={
-rr.Diagram(rr.Choice(1,
-    rr.Sequence(Red("PACKAGE"), "Path", rr.OneOrMore("Statement")),
-    rr.Sequence(Red("IMPORT"), "qualifier: Term", rr.OneOrMore("Selector")),
-    rr.Sequence(Red("VALDEF"), "NameRef", "Type", rr.Optional("rhs: Term"), rr.OneOrMore("Modifier")),
-    rr.Comment("..."),
-))
-} />
-
----
-
-# Type
-
-<Railroad diagram={
-rr.Diagram(rr.Choice(2,
-    rr.Sequence(Red("TYPEREF"), "NameRef", "qual: Type"),
-    rr.Sequence(Red("TERMREF"), "NameRef", "qual: Type"),
-    rr.Sequence(Red("TYPEBOUNDS"), "low: Type", "high: Type"),
-    rr.Sequence(Red("APPLIEDtype"), "type constructor: Type", rr.ZeroOrMore("argument: Type")),
-    rr.Comment("...")
-))
-} />
-
----
-
-# Term
-
-<Railroad diagram={
-rr.Diagram(rr.Choice(2,
-    rr.Sequence(Red("IDENT"), "NameRef", "Type"),
-    rr.Sequence(Red("SELECT"), "NameRef", "Term"),
-    rr.Sequence(Red("APPLY"), "fun: Term", rr.ZeroOrMore("arg: Term")),
-    rr.Sequence(Red("IF"), "cond: Term", "then: Term", "else: Term"),
-    rr.Comment("...")
-))
-} />
-
----
-
-# Comments section
-
-Stores scaladoc of each definition
-
-<Railroad diagram={
-rr.Diagram(
-  "\"Comments\"", rr.OneOrMore("Comment")
-)
-} />
-
----
-
-# Comment
-
-<Railroad diagram={
-rr.Diagram(
-  "definition: Addr", "length: Nat", rr.OneOrMore("UTF8-CodePoint"), "position: Coord"
-)
-} />
-
----
-
-# Positions section
-
-- Stores the position of every user-written tree
-- Encodes delta between positions
-
-<Railroad diagram={
-rr.Diagram(
-  "\"Positions\"", rr.OneOrMore("Assoc")
-)
-} />
-
----
-
-# Full grammar
-
-See `TastyFormat.scala` in [github.com/lampepfl/dotty](github.com/lampepfl/dotty)
-
----
-
-# OK cool, but what can I do with it ?
-
-<ul>
-  <Appear>
-  <li>Problem: Library <b>A</b> is compiled with Scala 3.1, I'd like to use it with Scala
-  3.2</li>
-  <li>Solution: Fetch the .jar for <b>A</b>, delete the .class files, regenerate
-  them from the .tasty files</li>
-  <li>Could be handled by the build tool</li>
-  <li>Or by a remote package repository</li>
-  <li>Not a silver bullet: only works if standard library of 3.2 is compatible
-  with 3.1</li>
-  </Appear>
-</ul>
-
----
-
-# Tooling around Tasty
-
-<ul>
-  <Appear>
-    <li>Generate .tasty files: running Dotty will produce both .tasty and .class files</li>
-    <li>Compile from .tasty files: run <span style={{fontFamily: "Fira Mono"}}>dotc -from-tasty</span></li>
-    <li>Decompile .tasty files: run <span style={{fontFamily: "Fira Mono"}}>dotc
-  -decompile</span> or open it in VSCode</li>
-  </Appear>
-</ul>
-
----
-
-# In progress: Scala 2 plugin
-
-<ul>
-  <Appear>
-    <li>Implemented proof-of-concept Scala 2 ➡️  .tasty last year</li>
-    <li>Need to move Tasty serialization logic out of Dotty into its own project</li>
-    <li>.tasty ➡️ Scala 2 would allow using Dotty libraries in Scala 2 projects</li>
-  </Appear>
-</ul>
-
----
-
-# Bonus: tasty-reflect for tooling
-
-<ul>
-  <Appear>
-    <li>Directly manipulating tasty trees is not easy</li>
-    <li>Instead, prefer using tasty-reflect, provides similar API to Scala 2 macros</li>
-    <li>.tasty ➡️ .semanticdb (incomplete): <a href="github.com/lampepfl/dotty/tree/master/semanticdb">https://github.com/lampepfl/dotty/tree/master/semanticdb</a></li>
-    <li>.tasty ➡️ HTML documentation: not merged yet</li>
-    <li>See Nicolas' talk on Metaprogramming tomorrow for more information.</li>
-  </Appear>
-</ul>
-
----
-
-# :christmas_tree: :evergreen_tree: :christmas_tree: :evergreen_tree: :christmas_tree:
 
 # Thank you!
 
-# :evergreen_tree: :christmas_tree: :evergreen_tree: :christmas_tree: :evergreen_tree:
