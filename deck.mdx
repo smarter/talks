@@ -382,7 +382,7 @@ id(1) // How is this typed?
 <Appear>
 <li>If <b>too early</b>: miss <span style="color: #ff80ae;">constraints</span></li>
 <li>If <b>too late</b>: typechecking gets stuck</li>
-<li>Solution: be lazy, do it only <b>when necessary</b></li>
+<li>Solution: do it only when it's <b>safe</b> or when it's <b>necessary</b></li>
 </Appear>
 </ul>
 <li><b>What</b> should <span style="font-family: Fira Mono;"><span
@@ -396,10 +396,118 @@ Hi</span></span> be <span style="color: #930077;">instantiated</span> to?</li>
 <li>If <span style="font-family: Fira Mono;"><span style="color:
 #ff80ae;">Lo</span> =:= <span style="color: #ff80ae;">Hi</span></span>, just
 pick one arbitrarily</li>
-<li>Otherwise, look at the <b>position</b> of <span style="font-family: Fira Mono; color:#00a2b3;">T?</span></li>
+<li>Otherwise, depends on the <b>position</b> of <span style="font-family: Fira Mono; color:#00a2b3;">T?</span></li>
 </Appear>
 </ul>
 </ul>
+
+---
+
+```scala
+def foo[T](x: T): List[T]
+```
+
+To typecheck <span style="font-family: Fira Mono;">foo(1)</span>, we need to:
+
+<ol>
+<Appear>
+<li><span style="color: #91b029;">Adapt</span> the expression:</li>
+<center>
+<span style="font-family: Fira Mono;">foo<span style="color:
+#91b029;">[</span><span style="color: #00a2b3;">T?</span><span style="color:
+#91b029;">]</span>(1)</span>
+</center>
+<li>Record the <span style="color: #ff80ae;">constraints</span>:</li>
+<center>
+<span style="font-family: Fira Mono;"><span style="color:
+#00a2b3;">T?</span> <span style="color: #ff80ae;">&gt;: Int &lt;:
+Any</span></span>
+</center>
+<li>Look at the result type:</li>
+<center>
+<span style="font-family: Fira
+Mono;"><center>List[<span style="color:
+#00a2b3;">T?</span>]</center></span>
+</center>
+<li>
+<span style="color: #930077;">Instantiate</span> the <span style="color:#00a2b3;">type variable</span>:</li>
+<center>
+<span style="font-family: Fira Mono;"><span
+style="color:#00a2b3;">T?</span> <span style="color: #930077;">:=
+Int</span></span>
+</center>
+</Appear>
+</ol>
+
+---
+
+```scala
+def foo[T](x: T): T => Stri​ng
+```
+
+To typecheck <span style="font-family: Fira Mono;">foo(1)</span>, we need to:
+
+<ol>
+<li><span style="color: #91b029;">Adapt</span> the expression:</li>
+<center>
+<span style="font-family: Fira Mono;">foo<span style="color:
+#91b029;">[</span><span style="color: #00a2b3;">T?</span><span style="color:
+#91b029;">]</span>(1)</span>
+</center>
+<li>Record the <span style="color: #ff80ae;">constraints</span>:</li>
+<center>
+<span style="font-family: Fira Mono;"><span style="color:
+#00a2b3;">T?</span> <span style="color: #ff80ae;">&gt;: Int &lt;:
+Any</span></span>
+</center>
+<li>Look at the result type:</li>
+<center>
+<span style="font-family: Fira
+Mono; border: dashed 2px black;"><span style="color:
+#00a2b3;">T?</span> => String</span>
+</center>
+<li>
+<span style="color: #930077;">Instantiate</span> the <span style="color:#00a2b3;">type variable</span>:</li>
+<center>
+<span style="font-family: Fira Mono;"><span
+style="color:#00a2b3;">T?</span> <span style="color: #930077;">:=&nbsp;
+<span style="border: dashed 2px black;">Any</span></span></span>
+</center>
+</ol>
+
+---
+
+```scala
+def foo[T](x: T): T => T
+```
+
+To typecheck <span style="font-family: Fira Mono;">foo(1)</span>, we need to:
+
+<ol>
+<li><span style="color: #91b029;">Adapt</span> the expression:</li>
+<center>
+<span style="font-family: Fira Mono;">foo<span style="color:
+#91b029;">[</span><span style="color: #00a2b3;">T?</span><span style="color:
+#91b029;">]</span>(1)</span>
+</center>
+<li>Record the <span style="color: #ff80ae;">constraints</span>:</li>
+<center>
+<span style="font-family: Fira Mono;"><span style="color:
+#00a2b3;">T?</span> <span style="color: #ff80ae;">&gt;: Int &lt;:
+Any</span></span>
+</center>
+<li>Look at the result type:</li>
+<center>
+<span style="font-family: Fira
+Mono; border: dashed 2px black;"><span style="color:
+#00a2b3;">T?</span> => T?</span>
+</center>
+<Appear>
+<li>
+<b>Delay</b> the <span style="color:
+#930077;">instantiation</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>&nbsp;</li>
+</Appear>
+</ol>
 
 ---
 
