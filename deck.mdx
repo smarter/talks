@@ -17,6 +17,7 @@ export const themes = [prism, myTheme];
 import "./custom.css";
 
 import contributors from "./contributors.png";
+import si2712a from "./si2712a.png";
 
 # Scala 3, type inference and you!
 
@@ -795,20 +796,236 @@ new Foo2()   // T? =: Null
 
 ---
 
-# Menu
+# Menu of advanced topics
 
-- Implicits
+- Implicit search
 - Higher-kinded types
 - Union types
-- The foldLeft problem
+- The `foldLeft` problem
 
 ---
 
-# Implicits
+# Implicit search and type variables
+
+```scala
+def foo[T](x: T)(implicit ev: Foo[T]): …
+
+foo[T?](a)
+```
+
+Should we force the instantiation of `T?` before doing the implicit search ?
+
 
 - Do implicit search with tvars in type: ambiguous
 - Do implicit search with all tvars instantiated: too restrictive
 - Do implicit search with all previously constrained tvars instantiated: OK!
+
+---
+
+# Attempt 1: force instantation of all tvars
+
+Usually fine, except when encoding **functional dependencies**:
+
+```scala
+Matrix * Matrix => Matrix
+Matrix * Vector => Vector
+Matrix * Int    => Matrix
+   Int * Matrix => Matrix
+```
+
+---
+
+```scala
+trait MultDep[A, B, C] {
+  def apply(a: A, b: B): C
+}
+implicit object mmm extends MultDep[Matrix, Matrix, Matrix] {
+  def apply(a: Matrix, b: Matrix): Matrix = …
+}
+implicit object mvv extends MultDep[Matrix, Vector, Vector] {
+  def apply(a: Matrix, b: Vector): Vector = …
+}
+```
+
+---
+
+```scala
+def mult[A, B, C](a: A, b: B)(
+  implicit ev: MultDep[A, B, C]): C = ev(a, b)
+
+mult(matrix1, matrix2) // : Matrix
+mult(matrix1, vector1) // : Vector
+```
+---
+
+```scala
+def mult[A, B, C](a: A, b: B)(
+  implicit ev: MultDep[A, B, C]): C = ev(a, b)
+
+```
+
+- mult[?A, ?B, ?C](matrix1, vector1)
+- ?A >: Matrix
+- ?B >: Vector
+- ?C >: Nothing <: Any
+- Implicit search for MultDep[?A, ?B, ?C]
+- After instantiation: MultDep[Matrix, Vector, Nothing]
+- Implicit not found!
+
+---
+
+# Attempt 2: Keep type variables as-is
+
+- Directly do an implicit search for `MultDep[?A, ?B, ?C]`
+- `mvv <: MultDep[?A, ?B, ?C]`
+- `MultDep[Matrix, Vector, Vector] <: MultDep[?A, ?B, ?C]`
+- `?A := Matrix, ?B := Vector, ?C := Vector`
+- Pick `mvv`
+
+---
+
+```scala
+def foo[T](x: T)(implicit ev: Foo[T]): …
+
+implicit val a: Foo[Int] = …
+implicit val b: Foo[Any] = …
+
+foo(1)
+```
+
+- T? >: Int
+- Both `a` and `b` match the type: ambiguous implicit!
+
+---
+
+# Solution
+
+- Only instantiate constrained type variables!
+- mult[?A, ?B, ?C](matrix1, vector1)
+- ?A >: Matrix
+- ?B >: Vector
+- ?C unconstrained
+- Implicit search for MultDep[Matrix, Vector, ?C]
+- `mvv <: MultDep[Matrix, Vector, ?C]`
+- `MultDep[Matrix, Vector, Vector] <: MultDep[?A, ?B, ?C]`
+- `?C := Vector`
+- Pick `mvv`
+
+---
+
+# Higher-kinded types
+
+Type variables can be higher-kinded too:
+
+```scala
+def foo[F[_]](fi: F[Int]): ...
+val ii: (Int, Int)
+foo(ii)
+```
+
+- `foo[?F](ii)`
+- `?F[Int] >: (Int, Int)`
+- 🤔
+- `?F := [X] =>> (X, X)`
+- `?F := [X] =>> (Int, X)`
+- `?F := [X] =>> (X, Int)`
+- `?F := [X] =>> (Int, Int)`
+
+---
+
+What should we instantiate `?F` to ?
+```scala
+?F =: [X] =>> X => X
+?F =: [X] =>> X => X
+?F =: [X] =>> X => X
+?F =: [X] =>> X => X
+```
+
+---
+
+- This is higher-order unification
+- Undecidable in general
+- Huet's algorithm: semi-decidable (might not terminate if there's no solution)
+-  🤔 🤔 🤔
+
+---
+
+# The infamous SI-2712
+
+<img src={si2712a} width="70%" />
+
+---
+
+# Union types
+
+```scala
+if (cond)
+  1
+else
+  true
+```
+
+- Typed as `Int | Boolean`
+
+---
+
+# Why do we need union types ?
+
+```scala
+trait A { type T <: A }
+trait B { type T <: B }
+class C extends A with B { type T <: C }
+class D extends A with B { type T <: D }
+val x = if (cond) new C else new D
+```
+What's the type of `x` ? We want the <b>least upper bound</b> of `C` and `D`.
+In Scala 2:
+```scala
+A with B { type T <: (A with B { type T <: (...
+```
+Infinite.
+In Dotty:
+```scala
+C | D
+```
+
+---
+
+# When should we infer unions ?
+
+Inferring a type which is "too precise" is sometimes problematic:
+
+```scala
+trait Base
+class A extends Base
+class B extends Base
+class C extends Base
+var x = if (cond) new A else new B
+x = new C
+```
+If we infer the type of `x` to be `A | B`, then the last line will fail
+Solution: widen the type to a non-union.
+
+---
+
+# Should we preserve unions more often ?
+
+```scala
+val x: A | B = ...
+val y = x
+val z: A | B = y
+```
+- Intuitively, we want to avoid widening user-written unions
+- https://github.com/lampepfl/dotty/issues/4867
+
+---
+
+# The `foldLeft` problem
+
+```scala
+val xs: List[Int]
+xs.foldLeft(Nil)((acc, x) => x :: acc)
+```
 
 ---
 
