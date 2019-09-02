@@ -989,27 +989,46 @@ val ii: (Int, Int)
 foo(ii)
 ```
 
-- `foo[?F](ii)`
-- `?F[Int] >: (Int, Int)`
-- 🤔
-- `?F := [X] =>> (X, X)`
-- `?F := [X] =>> (Int, X)`
-- `?F := [X] =>> (X, Int)`
-- `?F := [X] =>> (Int, Int)`
+<ul>
+<Appear>
+<li>
+<span style="font-family: Fira Mono;">
+foo[?F](ii)
+</span>
+</li>
+<li>
+<span style="font-family: Fira Mono;">
+?F[Int] &gt;: (Int, Int)
+</span>
+</li>
+<li>
+<span style="font-family: Fira Mono;">
+?F := [X] =&gt;&gt; (X, X)
+</span>
+</li>
+<li>
+<span style="font-family: Fira Mono;">
+?F := [X] =&gt;&gt; (Int, X)
+</span>
+</li>
+<li>
+<span style="font-family: Fira Mono;">
+?F := [X] =&gt;&gt; (X, Int)
+</span>
+</li>
+<li>
+<span style="font-family: Fira Mono;">
+?F := [X] =&gt;&gt; (X, Int)
+</span>
+</li>
+</Appear>
+</ul>
 
 ---
 
-What should we instantiate `?F` to ?
-```scala
-?F =: [X] =>> X => X
-?F =: [X] =>> X => X
-?F =: [X] =>> X => X
-?F =: [X] =>> X => X
-```
+# Oh no.
 
----
-
-- This is higher-order unification
+- This is a form of <b>higher-order unification</b>
 - Undecidable in general
 - Huet's algorithm: semi-decidable (might not terminate if there's no solution)
 -  🤔 🤔 🤔
@@ -1047,13 +1066,9 @@ val x = if (cond) new C else new D
 What's the type of `x` ? We want the <b>least upper bound</b> of `C` and `D`.
 In Scala 2:
 ```scala
-A with B { type T <: (A with B { type T <: (...
+A with B { type T <: (A with B { type T <: ...
 ```
-Infinite.
-In Dotty:
-```scala
-C | D
-```
+This is <b>infinite</b> and need to be approximated, in Dotty instead we have `C | D`.
 
 ---
 
@@ -1069,8 +1084,8 @@ class C extends Base
 var x = if (cond) new A else new B
 x = new C
 ```
-If we infer the type of `x` to be `A | B`, then the last line will fail
-Solution: widen the type to a non-union.
+- If we infer the type of `x` to be `A | B`, then the last line will fail.
+- Solution: <b>widen</b> the type to a non-union.
 
 ---
 
@@ -1081,8 +1096,8 @@ val x: A | B = ...
 val y = x
 val z: A | B = y
 ```
-- Intuitively, we want to avoid widening user-written unions
-- https://github.com/lampepfl/dotty/issues/4867
+- Intuitively, we want to avoid widening **user-written** unions
+- Open issue: https://github.com/lampepfl/dotty/issues/4867
 
 ---
 
