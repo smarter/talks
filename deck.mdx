@@ -16,6 +16,8 @@ export const themes = [prism, myTheme];
 
 import "./custom.css";
 
+import contributors from "./contributors.png";
+
 # Scala 3, type inference and you!
 
 Guillaume Martres - EPFL
@@ -382,7 +384,7 @@ id(1) // How is this typed?
 <Appear>
 <li>If <b>too early</b>: miss <span style="color: #ff80ae;">constraints</span></li>
 <li>If <b>too late</b>: typechecking gets stuck</li>
-<li>Solution: do it only when it's <b>safe</b> or when it's <b>necessary</b></li>
+<li>Solution: do it only when it's <b>safe</b> or when it's <b>forced</b></li>
 </Appear>
 </ul>
 <li><b>What</b> should <span style="font-family: Fira Mono;"><span
@@ -467,12 +469,15 @@ Mono; background-color: #e4f6bd;"><span style="color:
 #00a2b3;">T?</span> => String</span>
 </center>
 <li>
-<span style="color: #930077;">Instantiate</span> the <span style="color:#00a2b3;">type variable</span>:</li>
+<span style="color: #930077;">Instantiate</span> the <span
+style="color:#00a2b3;">type variable</span>:</li>
+<Appear>
 <center>
 <span style="font-family: Fira Mono;"><span
 style="color:#00a2b3;">T?</span> <span style="color: #930077;">:=&nbsp;
 <span style="background-color: #e4f6bd;">Any</span></span></span>
 </center>
+</Appear>
 </ol>
 
 ---
@@ -512,6 +517,298 @@ Mono; background-color: #e4f6bd;"><span style="color:
 </li>
 </Appear>
 </ol>
+
+---
+
+# When is instantiation safe?
+
+```scala
+def foo[T](…): ResType = …
+foo[T?](…) // T? >: Lo <: Hi
+  .bar(…)
+```
+
+<table class="fragment" data-fragment-index="3">
+<tr>
+<td><b>Positions</b> of T in ResType</td>
+<td>Instantiation of T?</td>
+</tr>
+<tr>
+<td>Not present</td>
+<td>
+<Appear>
+<span>
+Lo (arbitrary)
+</span>
+</Appear>
+</td>
+</tr>
+<tr>
+<td><b>co</b>variant</td>
+<td>
+<Appear>
+<span></span>
+<span>
+Lo
+</span>
+</Appear>
+</td>
+</tr>
+<tr>
+<td><b>contra</b>variant</td>
+<td>
+<Appear>
+<span></span>
+<span></span>
+<span>
+Hi
+</span>
+</Appear>
+</td>
+</tr>
+<tr>
+<td><b>co</b>- <b>and</b> <b>contra</b>variant<br/> or <b>in</b>variant</td>
+<td>
+<Appear>
+<span></span>
+<span></span>
+<span></span>
+<span>
+<b>Unsafe, delay</b>
+</span>
+</Appear>
+</td>
+</tr>
+</table>
+
+---
+
+# When is instantiation forced?
+
+<ul>
+<Appear>
+<li>When inferring a result type:</li>
+<span>
+<code class="language-scala">
+val x = Array()
+</code>
+</span>
+<li>When typing a lambda:</li>
+<span>
+<code class="language-scala">
+foo(y => y + 1)
+</code>
+</span>
+<span>
+To typecheck the body of the lambda, we need to know the type of y.
+</span>
+<li>When performing an implicit search</li>
+<li>… and a few other cases</li>
+</Appear>
+</ul>
+
+---
+
+# Forced instantiation
+
+```scala
+class Foo[A]
+def id[T](x: Foo[T]): Foo[T] = x
+val f = id(Foo(1))
+```
+
+<ol>
+<Appear>
+<li>id[T?](Foo[A?](1))</li>
+<li>A? &gt;: Int</li>
+<li>Foo[A?] &lt;: Foo[T?]</li>
+<li>T? =: A?</li>
+<li>Instantiation of A? is not safe but forced to give a type to f, which bound should we pick ?</li>
+<li>A? =: Int</li>
+<li>
+<ol>
+<li>
+if a type variable is constrained in only one direction,<br/>
+use that as the instantiation</li>
+<li>Otherwise, use the lower bound</li>
+</ol>
+</li>
+</Appear>
+</ol>
+
+
+---
+
+# But is it actually better than Scala 2 ?
+
+<ul>
+<Appear>
+<li>Hard to say: not much code written with Dotty yet.</li>
+<li>Thread on <a href="https://contributors.scala-lang.org/t/better-type-inference-for-scala-send-us-your-problematic-cases/2410">contributors.scala-lang.org</a>:</li>
+<span><img src={contributors} width="30%" /></span>
+<li>Most of the code sent already work in Dotty!</li>
+</Appear>
+</ul>
+
+---
+
+# So what's different in Scala 2 ?
+
+<ul>
+<li><b>When</b> should a <span style="color:#00a2b3;">type variable</span> be <span style="color: #930077;">instantiated</span>?</li>
+<ul>
+<Appear>
+<li>Scala 2 does it for every <span style="color:#00a2b3;">type variable</span> after <b>every parameter list</b> it types</li>
+<li>… unless the instantiated type would be Nothing</li>
+<li>This is sometimes <b>too late</b> and sometimes <b>too early</b></li>
+</Appear>
+</ul>
+</ul>
+
+---
+
+# When Scala 2 is too late
+
+```scala
+def app1[T](x: T)(y: T => String) = y(x)
+def app2[T](x: T, y: T => String) = y(x)
+
+
+app1(1)((x: Int) => x.toString)
+
+app1(1)(x => x.toString)
+```
+
+---
+
+# When Scala 2 is too late
+
+```scala
+def app1[T](x: T)(y: T => String) = y(x)
+def app2[T](x: T, y: T => String) = y(x)
+
+// OK in Scala 2 and Dotty
+app1(1)((x: Int) => x.toString)
+// OK in Scala 2 and Dotty
+app1(1)(x => x.toString)
+```
+---
+
+# When Scala 2 is too late
+
+```scala
+def app1[T](x: T)(y: T => String) = y(x)
+def app2[T](x: T, y: T => String) = y(x)
+
+
+app2(1, (x: Int) => x.toString)
+
+app2(1, x => x.toString)
+```
+
+---
+
+# When Scala 2 is too late
+
+```scala
+def app1[T](x: T)(y: T => String) = y(x)
+def app2[T](x: T, y: T => String) = y(x)
+
+// OK in Scala 2 and Dotty
+app2(1, (x: Int) => x.toString)
+// Error in Scala 2, OK in Dotty
+app2(1, x => x.toString)
+```
+
+---
+
+# When Scala 2 is too early
+
+```
+class Foo1[T]() { def put(x: T) = {} }
+class Foo2[T >: Null]() { def put(x: T) = {} }
+
+new Foo1()
+
+  .put("")
+
+```
+
+---
+
+# When Scala 2 is too early
+
+```
+class Foo1[T]() { def put(x: T) = {} }
+class Foo2[T >: Null]() { def put(x: T) = {} }
+
+new Foo1()   // No instantiation
+             // (to avoid T? =: Nothing)
+  .put("")   // T? =: String
+
+```
+
+---
+
+# When Scala 2 is too early
+
+```
+class Foo1[T]() { def put(x: T) = {} }
+class Foo2[T >: Null]() { def put(x: T) = {} }
+
+new Foo2()
+
+  .put("")
+
+```
+
+---
+
+# When Scala 2 is too early
+
+```
+class Foo1[T]() { def put(x: T) = {} }
+class Foo2[T >: Null]() { def put(x: T) = {} }
+
+new Foo2()   // T? =: Null
+
+  .put("")   // error: type mismatch:
+             //   Null does not match String
+```
+
+---
+
+# The fear of Nothing 😱
+
+- Sometimes you really want to infer Nothing, but Scala 2 won't let you!
+  ```scala
+  class Foo[T]
+  def foo[T](x: Foo[T]) = x
+  foo(new Foo[Nothing]) // error in Scala 2
+  ```
+
+- Work around (used by fs2):
+  ```scala
+  type MyNothing <: Nothing
+  ```
+  See [Inference-Driven Design](https://mpilquist.github.io/blog/2018/07/04/fs2/) blog post by Michael Pilquist
+
+---
+
+# Menu
+
+- Implicits
+- Higher-kinded types
+- Union types
+- The foldLeft problem
+
+---
+
+# Implicits
+
+- Do implicit search with tvars in type: ambiguous
+- Do implicit search with all tvars instantiated: too restrictive
+- Do implicit search with all previously constrained tvars instantiated: OK!
 
 ---
 
