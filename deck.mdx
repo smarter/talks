@@ -203,7 +203,7 @@ elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
 Select -> Ident
 Select -> elem
 5 [style="filled", fontcolor="#b36232"]
-Apply -> Select [color="#ef4b4b", fontcolor="#ef4b4b", label="?(...)"];
+Apply -> Select [color="#ef4b4b", fontcolor="#ef4b4b", label="?(...)", fontsize="24"];
 Apply -> Literal
 Literal -> 5
 }
@@ -219,7 +219,7 @@ elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
 Select -> Ident [color="#ef4b4b"];
 Select -> elem
 5 [style="filled", fontcolor="#b36232"]
-Apply -> Select [color="#ef4b4b", fontcolor="#ef4b4b", label="?(...)"];
+Apply -> Select [color="#ef4b4b", fontcolor="#ef4b4b", label="?(...)", fontsize="24"];
 Apply -> Literal
 Literal -> 5
 }
@@ -233,10 +233,10 @@ foo [label="\\\"foo\\\"", style="filled", fontcolor="#b36232"]
     Ident [shape="record", label="Ident | foo.type", fillcolor="#fae3d9"]
 Ident -> foo
 elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
-Select -> Ident [color="#ef4b4b", fontcolor="#ef4b4b", label="?.elem"];
+Select -> Ident [color="#ef4b4b", fontcolor="#ef4b4b", label="?.elem", fontsize="24"];
 Select -> elem
 5 [style="filled", fontcolor="#b36232"]
-Apply -> Select [color="#ef4b4b", fontcolor="#ef4b4b", label="?(...)"];
+Apply -> Select [color="#ef4b4b", fontcolor="#ef4b4b", label="?(...)", fontsize="24"];
 Apply -> Literal
 Literal -> 5
 }
@@ -254,7 +254,7 @@ elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
 Select -> Ident;
 Select -> elem
 5 [style="filled", fontcolor="#b36232"]
-Apply -> Select [color="#ef4b4b", fontcolor="#ef4b4b", label="?(...)"];
+Apply -> Select [color="#ef4b4b", fontcolor="#ef4b4b", label="?(...)", fontsize="24"];
 Apply -> Literal
 Literal -> 5
 }
@@ -273,7 +273,7 @@ elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
 Select -> Ident;
 Select -> elem
 5 [style="filled", fontcolor="#b36232"]
-Apply -> Select [color="#ef4b4b", fontcolor="#ef4b4b", label="?(Int)"];
+Apply -> Select [color="#ef4b4b", fontcolor="#ef4b4b", label="?(Int)", fontsize="24"];
 Apply -> Literal;
 Literal -> 5
 }
@@ -292,7 +292,7 @@ elem [label="\\\"elem\\\"", style="filled", fontcolor="#b36232"]
 Select -> Ident;
 Select -> elem
 5 [style="filled", fontcolor="#b36232"]
-Apply -> Select [color="#ef4b4b", fontcolor="#ef4b4b", label="?(Int)"];
+Apply -> Select [color="#ef4b4b", fontcolor="#ef4b4b", label="?(Int)", fontsize="24"];
 Apply -> Literal;
 Literal -> 5
 }
@@ -529,53 +529,53 @@ foo[T?](…) // T? >: Lo <: Hi
   .bar(…)
 ```
 
-<table class="fragment" data-fragment-index="3">
+<table class="fragment" data-fragment-index="3" style="width: 80%;">
 <tr>
-<td><b>Positions</b> of T in ResType</td>
-<td>Instantiation of T?</td>
+<td><b>Where</b> does T appear in <span style="font-family: Fira Mono;">ResType</span> ?</td>
+<td>Instantiation of <span style="color: #00a2b3;">T?</span></td>
 </tr>
 <tr>
-<td>Not present</td>
+<td>Nowhere</td>
 <td>
 <Appear>
 <span>
-Lo (arbitrary)
+<span style="font-family: Fira Mono;">Lo</span> (arbitrary)
 </span>
 </Appear>
 </td>
 </tr>
 <tr>
-<td><b>co</b>variant</td>
+<td>In <b>co</b>variant position</td>
 <td>
 <Appear>
 <span></span>
 <span>
-Lo
+<span style="font-family: Fira Mono;">Lo</span>
 </span>
 </Appear>
 </td>
 </tr>
 <tr>
-<td><b>contra</b>variant</td>
+<td>In <b>contra</b>variant position</td>
 <td>
 <Appear>
 <span></span>
 <span></span>
 <span>
-Hi
+<span style="font-family: Fira Mono;">Hi</span>
 </span>
 </Appear>
 </td>
 </tr>
 <tr>
-<td><b>co</b>- <b>and</b> <b>contra</b>variant<br/> or <b>in</b>variant</td>
+<td>In <b>co</b>- <b>and</b> <b>contra</b>variant<br/> or <b>in</b>variant position</td>
 <td>
 <Appear>
 <span></span>
 <span></span>
 <span></span>
 <span>
-<b>Unsafe, delay</b>
+<b>Unsafe: delay instantiation</b>
 </span>
 </Appear>
 </td>
@@ -610,7 +610,7 @@ To typecheck the body of the lambda, we need to know the type of y.
 
 ---
 
-# Forced instantiation
+# Forced instantiation example
 
 ```scala
 class Foo[A]
@@ -620,23 +620,26 @@ val f = id(Foo(1))
 
 <ol>
 <Appear>
-<li>id[T?](Foo[A?](1))</li>
-<li>A? &gt;: Int</li>
-<li>Foo[A?] &lt;: Foo[T?]</li>
-<li>T? =: A?</li>
-<li>Instantiation of A? is not safe but forced to give a type to f, which bound should we pick ?</li>
-<li>A? =: Int</li>
-<li>
-<ol>
-<li>
-if a type variable is constrained in only one direction,<br/>
-use that as the instantiation</li>
-<li>Otherwise, use the lower bound</li>
-</ol>
-</li>
+<li><span style="font-family: Fira Mono;">id[T?](Foo[A?](1))</span></li>
+<li><span style="font-family: Fira Mono;">A? &gt;: Int</span></li>
+<li><span style="font-family: Fira Mono;">Foo[A?] &lt;: Foo[T?]</span></li>
+<li><span style="font-family: Fira Mono;">T? =: A?</span></li>
+<li>To type <span style="font-family: Fira Mono;">f</span>, we need to force <span style="font-family: Fira Mono;">?A</span></li>
+<li><span style="font-family: Fira Mono;">A? =: Int</span></li>
 </Appear>
 </ol>
 
+---
+
+# Forced <span style="color: #930077;">instantiation</span> heuristic
+
+<ol>
+<li>
+if a <span
+style="color:#00a2b3;">type variable</span> is <span style="color: #ff80ae;">constrained</span> in only one direction,<br/>
+use that <span style="color: #ff80ae;">constraint</span> as the <span style="color: #930077;">instantiation</span></li>
+<li>Otherwise, use the <span style="color: #ff80ae;">lower bound constraint</span></li>
+</ol>
 
 ---
 
@@ -660,7 +663,7 @@ use that as the instantiation</li>
 <ul>
 <Appear>
 <li>Scala 2 does it for every <span style="color:#00a2b3;">type variable</span> after <b>every parameter list</b> it types</li>
-<li>… unless the instantiated type would be Nothing</li>
+<li>… unless the instantiated type would be <span style="font-family: Fira Mono;">Nothing</span></li>
 <li>This is sometimes <b>too late</b> and sometimes <b>too early</b></li>
 </Appear>
 </ul>
@@ -779,9 +782,9 @@ new Foo2()   // T? =: Null
 
 ---
 
-# The fear of Nothing 😱
+# The fear of <span style="font-family: Fira Mono;">Nothing</span> 😱
 
-- Sometimes you really want to infer Nothing, but Scala 2 won't let you!
+- Sometimes you really want to infer <span style="font-family: Fira Mono;">Nothing</span>, but Scala 2 won't let you!
   ```scala
   class Foo[T]
   def foo[T](x: Foo[T]) = x
